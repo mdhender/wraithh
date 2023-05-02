@@ -4,6 +4,7 @@
 package orders
 
 import (
+	"github.com/mdhender/wraithh/lexer"
 	"os"
 )
 
@@ -15,44 +16,56 @@ func ParseFile(name string) (Orders, error) {
 	return Parse(buf)
 }
 
-func Parse(buf []byte) (Orders, error) {
-	toks, err := scanAll(buf)
-	if err != nil {
-		return nil, err
+func Parse(input []byte) (Orders, error) {
+	var toks tokens
+	line := 1
+	for len(input) != 0 {
+		var field string
+		field, input = lexer.Next(input)
+		tok := token{Line: line, Kind: "text", Text: field}
+		if len(field) == 0 {
+			tok.Kind = "text"
+		} else if field == "\n" {
+			tok.Kind, line = "eol", line+1
+		} else if n, ok := tok.asnum(); ok {
+			tok.Kind, tok.Number = "number", n
+		} else if n, ok := tok.aspct(); ok {
+			tok.Kind, tok.Number = "percent", n
+		}
+		toks = append(toks, tok)
 	}
-	//for _, tok := range toks {
-	//	fmt.Printf("%3d: %-12s %q\n", tok.Line, tok.Kind, tok.Text)
-	//}
-
-	parsers := []func(tokens) (Order, tokens){
-		// combat commands
-		parseBombard, parseInvade, parseRaid,
-		// support commands
-		parseSupport,
-		// setup commands
-		parseSetup,
-		// unknown commands
-		parseUnknownOrder,
+	// force token buffer to end with a new-line
+	if len(toks) == 0 || toks[len(toks)-1].Text != "\n" {
+		toks = append(toks, token{Line: line, Kind: "eol", Text: "\n"})
 	}
 
-	var ords Orders
+	var orders Orders
+	var order Order
+
 	for len(toks) != 0 {
-		var o Order
-		for _, parser := range parsers {
-			if o, toks = parser(toks); o != nil {
-				break
-			}
+		tok := toks[0]
+		toks = toks[1:]
+		switch tok.Text {
+		case "\n":
+			// ignore empty record
+			continue
+		case "bombard":
+			order, toks = parseBombard(toks)
+		case "invade":
+			order, toks = parseInvade(toks)
+		case "raid":
+			order, toks = parseRaid(toks)
+		case "setup":
+			order, toks = parseSetup(toks)
+		case "support-attack":
+			order, toks = parseSupportAttack(toks)
+		case "support-defend":
+			order, toks = parseSupportDefend(toks)
+		default: // unknown command
+			order, toks = parseUnknownOrder(tok, toks)
 		}
-		ords = append(ords, o)
-
-		// consume all tokens up to and including end of line
-		for len(toks) != 0 {
-			foundEol := toks[0].Kind == "eol"
-			toks = toks[1:]
-			if foundEol {
-				break
-			}
-		}
+		orders = append(orders, order)
 	}
-	return ords, nil
+
+	return orders, nil
 }

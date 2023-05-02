@@ -5,25 +5,30 @@ package orders
 
 import "fmt"
 
-func parseUnknownOrder(toks tokens) (Order, tokens) {
+func parseUnknownOrder(tok token, toks tokens) (*Unknown, tokens) {
 	o := &Unknown{
-		line:   toks[0].Line,
-		errors: []error{fmt.Errorf("%d: unknown order", toks[0].Line)},
+		line:    tok.Line,
+		command: tok.Text,
+		errors:  []error{fmt.Errorf("unknown order %q", tok.Text)},
 	}
-	for len(toks) != 0 && toks[0].Kind != "eol" {
-		toks = toks[1:]
+	// consume extra arguments, if any
+	for foundEol := false; len(toks) != 0 && !foundEol; toks = toks[1:] {
+		foundEol = toks[0].Kind == "eol"
 	}
 	return o, toks
 }
 
 type Unknown struct {
-	line   int
-	errors []error
+	line    int
+	command string
+	errors  []error
 }
 
-func (u *Unknown) Id() int            { return 0 }
-func (u *Unknown) AddError(err error) { u.errors = append(u.errors, err) }
-func (u *Unknown) Errors() []error    { return u.errors }
-func (u *Unknown) Execute() error     { panic("!") }
-func (u *Unknown) Line() int          { return u.line }
-func (u *Unknown) String() string     { return fmt.Sprintf("unknown line %d", u.line) }
+func (u *Unknown) Id() int { return 0 }
+func (u *Unknown) AddError(format string, args ...any) {
+	u.errors = append(u.errors, fmt.Errorf(format, args...))
+}
+func (u *Unknown) Errors() []error { return u.errors }
+func (u *Unknown) Execute() error  { panic("!") }
+func (u *Unknown) Line() int       { return u.line }
+func (u *Unknown) String() string  { return fmt.Sprintf("unknown command %q", u.command) }
