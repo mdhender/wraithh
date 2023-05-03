@@ -5,13 +5,13 @@ package main
 
 import (
 	"fmt"
-	"github.com/mdhender/wraithh/orders"
+	"github.com/mdhender/wraithh/parser"
 	"log"
 )
 
 func main() {
 	log.SetFlags(log.LstdFlags | log.LUTC)
-	ords, err := orders.ParseFile("mine.txt")
+	ords, err := parser.ParseFile("orders.txt")
 	if err != nil {
 		log.Fatal(err)
 	}

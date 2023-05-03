@@ -20,7 +20,7 @@ func parseBombard(toks tokens) (*Bombard, tokens) {
 			if t, rest = rest.next(); t.Kind != "percent" {
 				o.AddError("pctCommitted: expected percentage, got %q", t.Text)
 			} else {
-				o.pctCommited = t.Number
+				o.pctCommitted = t.Number
 			}
 		}
 	}
@@ -36,11 +36,11 @@ func parseBombard(toks tokens) (*Bombard, tokens) {
 }
 
 type Bombard struct {
-	line        int
-	id          int // id of unit being ordered
-	targetId    int // id of unit being attacked
-	pctCommited int
-	errors      []error
+	line         int
+	id           int // id of unit being ordered
+	targetId     int // id of unit being attacked
+	pctCommitted int
+	errors       []error
 }
 
 func (o *Bombard) Id() int { return o.id }
@@ -51,5 +51,5 @@ func (o *Bombard) Errors() []error { return o.errors }
 func (o *Bombard) Execute() error  { panic("!") }
 func (o *Bombard) Line() int       { return o.line }
 func (o *Bombard) String() string {
-	return fmt.Sprintf("bombard %d %d %d%%", o.id, o.targetId, o.pctCommited)
+	return fmt.Sprintf("bombard %d %d %d%%", o.id, o.targetId, o.pctCommitted)
 }
