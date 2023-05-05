@@ -10,35 +10,16 @@ import (
 	"unicode/utf8"
 )
 
-// Token is a token from the input.
-type Token struct {
-	Line  int
-	Kind  Kind
-	Value []byte
-}
-
-// Kind is the type of token.
-type Kind int
-
-// enums for Kind
-const (
-	EOF Kind = iota
-	EOL
-	INTEGER
-	PERCENTAGE
-	SPACES
-	TEXT
-)
-
 // Tokens is a helper function to scan an entire input buffer.
 // It returns a slice containing all the tokens found.
 // The slice returned will always end with an EOF token.
-func Tokens(input []byte) []*Token {
-	var tokens []*Token
+func Tokens(input []byte) (tokens []*Token) {
 	line := 1
 	for len(input) != 0 {
 		token := &Token{Line: line}
-		token.Kind, token.Value, input = Next(input)
+		var lexeme []byte
+		token.Kind, lexeme, input = Next(input)
+		token.Value = string(lexeme)
 		tokens = append(tokens, token)
 		if token.Kind == EOL {
 			line++
@@ -52,8 +33,32 @@ func Tokens(input []byte) []*Token {
 	return tokens
 }
 
+// RemoveEmptyLines removed empty lines from the tokens.
+func RemoveEmptyLines(input []*Token) (tokens []*Token) {
+	prior := &Token{Kind: EOL}
+	for _, token := range input {
+		if token.Kind == EOL && prior.Kind == EOL {
+			continue
+		}
+		tokens = append(tokens, token)
+		prior = token
+	}
+	return tokens
+}
+
+// RemoveSpaces removes spaces from the tokens.
+func RemoveSpaces(input []*Token) (tokens []*Token) {
+	for _, token := range input {
+		if token.Kind == SPACES {
+			continue
+		}
+		tokens = append(tokens, token)
+	}
+	return tokens
+}
+
 // Next returns the next lexeme from the buffer.
-// The lexeme can be a new-line, run of spaces, an integer, or a percentage.
+// The lexeme can be a new-line, run of spaces, a comman, an integer, or a percentage.
 // If the buffer is empty, returns nil, nil.
 // Otherwise, the lexeme and the remainder of the buffer are returned.
 func Next(buffer []byte) (kind Kind, lexeme, rest []byte) {
@@ -63,7 +68,7 @@ func Next(buffer []byte) (kind Kind, lexeme, rest []byte) {
 
 	// if it is end of line, return just the new-line.
 	if buffer[0] == '\n' {
-		return EOL, buffer[:1], buffer[1:]
+		return EOL, nil, buffer[1:]
 	}
 
 	r, w := utf8.DecodeRune(buffer)

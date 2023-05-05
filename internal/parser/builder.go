@@ -129,7 +129,7 @@ func (b *Builder) Add(token *tokenizer.Token) {
 // Internally Match calls Next to grab the next token.
 // In case of a match it adds it by calling Add.
 // Debug info is also added to the debug tree.
-func (b *Builder) Match(token *tokenizer.Token) (ok bool) {
+func (b *Builder) Match(want tokenizer.Token) (ok bool) {
 	b.mustEnter("Match")
 	debugMsg := ""
 	defer func() {
@@ -140,18 +140,22 @@ func (b *Builder) Match(token *tokenizer.Token) (ok bool) {
 		dt.add(newDebugTree(debugMsg))
 	}()
 
-	next, ok := b.Next()
+	token, ok := b.Next()
 	if !ok {
-		debugMsg = fmt.Sprint("<no tokens left> ≠ ", token)
+		debugMsg = fmt.Sprint("<no tokens left> ≠ ", want.Kind)
 		return false
 	}
-	if next != token {
+	matches := want.Kind == token.Kind
+	if matches && want.Value != "" {
+		matches = want.Value == token.Value
+	}
+	if !matches {
 		b.current--
-		debugMsg = fmt.Sprint(next, " ≠ ", token)
+		debugMsg = fmt.Sprint(token.Kind, " ≠ ", want.Kind)
 		return false
 	}
 	b.Add(token)
-	debugMsg = fmt.Sprint(next, " = ", token)
+	debugMsg = fmt.Sprint(token.Kind, " = ", want.Kind)
 	return true
 }
 

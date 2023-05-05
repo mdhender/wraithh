@@ -5,17 +5,37 @@ package main
 
 import (
 	"fmt"
-	"github.com/mdhender/wraithh/parser"
+	"github.com/mdhender/wraithh/internal/orders"
+	"github.com/mdhender/wraithh/internal/tokenizer"
 	"log"
+	"os"
 )
 
 func main() {
 	log.SetFlags(log.LstdFlags | log.LUTC)
-	ords, err := parser.ParseFile("orders.txt")
-	if err != nil {
+	if err := run(); err != nil {
 		log.Fatal(err)
 	}
-	for _, ord := range ords {
-		fmt.Println(ord)
+}
+
+func run() error {
+	fmt.Println("grammar:", orders.Grammar)
+
+	input, err := os.ReadFile("orders.txt")
+	if err != nil {
+		return err
 	}
+	tokens := tokenizer.RemoveEmptyLines(tokenizer.RemoveSpaces(tokenizer.Tokens(input)))
+	for _, t := range tokens {
+		fmt.Printf("%3d: %10s %q\n", t.Line, t.Kind, string(t.Value))
+	}
+
+	parseTree, debugTree, err := orders.Parse(tokens)
+	if err != nil {
+		fmt.Print("Debug Tree:\n\n", debugTree)
+		return err
+	}
+	fmt.Print("Parse Tree:\n\n", parseTree)
+
+	return nil
 }
