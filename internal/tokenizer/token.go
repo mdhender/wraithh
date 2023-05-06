@@ -19,7 +19,10 @@ type Kind int
 const (
 	EOF Kind = iota
 	EOL
+	COMMA
 	INTEGER
+	PARENCL
+	PARENOP
 	PERCENTAGE
 	SPACES
 	TEXT
@@ -32,8 +35,14 @@ func (k Kind) String() string {
 		return "EOF"
 	case EOL:
 		return "EOL"
+	case COMMA:
+		return "COMMA"
 	case INTEGER:
 		return "INTEGER"
+	case PARENCL:
+		return "PARENCL"
+	case PARENOP:
+		return "PARENOP"
 	case PERCENTAGE:
 		return "PERCENTAGE"
 	case SPACES:

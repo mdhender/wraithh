@@ -9,14 +9,21 @@ const Grammar = `
 
 	order = assemble | bombard | invade | raid | setup | support .
 
-	assemble = "assemble" INTEGER INTEGER TEXT [ INTEGER | TEXT ] EOL .
-	bombard  = "bombard"  INTEGER INTEGER PERCENTAGE EOL .
-	invade   = "invade"   INTEGER INTEGER PERCENTAGE EOL .
-	raid     = "raid"     INTEGER INTEGER PERCENTAGE TEXT EOL .
-	setup    = "setup"    INTEGER TEXT ("ship" || "colony") "transfer" EOL
-	           {xfer_detail}
-	           "end" EOL . 
-	support  = "support"  INTEGER INTEGER [INTEGER] PERCENTAGE EOL .
+	assemble    = "assemble"    CSID QUANTITY PRODUCT [DEPOSITID | PRODUCT  ] EOL .
+	disassemble = "disassemble" CSID QUANTITY PRODUCT [FACTGROUP | DEPOSITID] EOL .
 
-	xfer_detail = INTEGER TEXT EOL . 
+	bombard  = "bombard"  CSID CSID        PERCENTAGE          EOL .
+	invade   = "invade"   CSID CSID        PERCENTAGE          EOL .
+	raid     = "raid"     CSID CSID        PERCENTAGE MATERIAL EOL .
+	support  = "support"  CSID CSID [CSID] PERCENTAGE          EOL .
+
+	transfer = "transfer" CSID QUANTITY material CSID EOL .  
+	material = PRODUCT | PROFESSION | RESOURCE .
+
+	setup    = "setup"    CSID coordinate ("ship" | "colony") "transfer" EOL
+	           {xfer_detail}
+	           "end" EOL .
+
+	coordinate  = PARENOP INTEGER COMMA INTEGER COMMA INTEGER [COMMA INTEGER] PARENCL .
+	xfer_detail = QUANTITY material TEXT EOL .
 `

@@ -30,7 +30,7 @@ func run() error {
 		fmt.Printf("%3d: %10s %q\n", t.Line, t.Kind, string(t.Value))
 	}
 
-	parseTree, debugTree, err := orders.Parse(tokens)
+	parseTree, debugTree, err := orders.Parse(tokens, true)
 	if err != nil {
 		fmt.Print("Debug Tree:\n\n", debugTree)
 		return err

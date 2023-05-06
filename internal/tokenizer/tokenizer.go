@@ -66,9 +66,15 @@ func Next(buffer []byte) (kind Kind, lexeme, rest []byte) {
 		return EOF, nil, nil
 	}
 
-	// if it is end of line, return just the new-line.
+	// if it is a delimiter, just return it.
 	if buffer[0] == '\n' {
 		return EOL, nil, buffer[1:]
+	} else if buffer[0] == ',' {
+		return COMMA, buffer[:1], buffer[1:]
+	} else if buffer[0] == ')' {
+		return PARENCL, buffer[:1], buffer[1:]
+	} else if buffer[0] == '(' {
+		return PARENOP, buffer[:1], buffer[1:]
 	}
 
 	r, w := utf8.DecodeRune(buffer)
@@ -84,8 +90,12 @@ func Next(buffer []byte) (kind Kind, lexeme, rest []byte) {
 	}
 
 	// is it an integer or integer followed by a percent sign?
-	if unicode.IsDigit(r) {
+	if unicode.IsDigit(r) || ((r == '-' || r == '+') && (len(buffer) != 0 && isdigit(buffer[1]))) {
 		kind = INTEGER
+
+		lexeme, buffer = append(lexeme, buffer[:w]...), buffer[w:]
+		r, w = utf8.DecodeRune(buffer)
+
 		for len(buffer) != 0 && unicode.IsDigit(r) {
 			lexeme, buffer = append(lexeme, buffer[:w]...), buffer[w:]
 			r, w = utf8.DecodeRune(buffer)
@@ -95,8 +105,8 @@ func Next(buffer []byte) (kind Kind, lexeme, rest []byte) {
 			lexeme, buffer = append(lexeme, buffer[:w]...), buffer[w:]
 			r, w = utf8.DecodeRune(buffer)
 		}
-		// must be followed by space or new-line.
-		if r == '\n' || isspace(r) {
+		// must be terminated by a delimter (space, eol, eof, comma, parentheses)
+		if r == '\n' || isspace(r) || r == ',' || r == '(' || r == ')' {
 			return kind, lexeme, buffer
 		}
 		// it's not an integer or percentage, so fall through
@@ -108,6 +118,11 @@ func Next(buffer []byte) (kind Kind, lexeme, rest []byte) {
 		r, w = utf8.DecodeRune(buffer)
 	}
 	return TEXT, lexeme, buffer
+}
+
+// isdigit returns true if the byte is a digit
+func isdigit(ch byte) bool {
+	return '0' <= ch && ch <= '9'
 }
 
 // isspace returns true if the rune is a space or invalid rune.
