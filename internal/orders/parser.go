@@ -68,6 +68,8 @@ func order(b *parser.Builder) (ok bool) {
 		return invade(b)
 	} else if iskeyword(token, "raid") {
 		return raid(b)
+	} else if iskeyword(token, "retool") {
+		return retool(b)
 	} else if iskeyword(token, "setup") {
 		return setup(b)
 	} else if iskeyword(token, "support") {
@@ -81,21 +83,25 @@ func order(b *parser.Builder) (ok bool) {
 func assemble(b *parser.Builder) (ok bool) {
 	b.Enter("assemble")
 	defer b.Exit(&ok)
-
+	// command
 	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "assemble"}) {
 		return false
 	}
+	// csid
 	if !b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
 		return false
 	}
+	// optional factory group, deposit id, or mining group
+	if b.Match(tokenizer.Token{Kind: tokenizer.TEXT}) {
+		// do something
+	}
+	// quantity
 	if !b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
 		return false
 	}
+	// product or research
 	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT}) {
 		return false
-	}
-	if b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) || b.Match(tokenizer.Token{Kind: tokenizer.TEXT}) {
-		// optional
 	}
 	return b.Match(tokenizer.Token{Kind: tokenizer.EOL})
 }
@@ -156,7 +162,6 @@ func coordinate(b *parser.Builder) (ok bool) {
 func disassemble(b *parser.Builder) (ok bool) {
 	b.Enter("disassemble")
 	defer b.Exit(&ok)
-
 	// command
 	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "disassemble"}) {
 		return false
@@ -165,17 +170,17 @@ func disassemble(b *parser.Builder) (ok bool) {
 	if !b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
 		return false
 	}
+	// optional factory group, deposit id, or mining group
+	if b.Match(tokenizer.Token{Kind: tokenizer.TEXT}) {
+		// do something
+	}
 	// quantity
 	if !b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
 		return false
 	}
-	// product
+	// product or research
 	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT}) {
 		return false
-	}
-	// optional factory or deposit id
-	if b.Match(tokenizer.Token{Kind: tokenizer.TEXT}) || b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
-		//
 	}
 	return b.Match(tokenizer.Token{Kind: tokenizer.EOL})
 }
@@ -202,8 +207,7 @@ func invade(b *parser.Builder) (ok bool) {
 func material(b *parser.Builder) (ok bool) {
 	b.Enter("material")
 	defer b.Exit(&ok)
-
-	// product or profession or resource
+	// population or product or resource
 	return b.Match(tokenizer.Token{Kind: tokenizer.TEXT})
 }
 
@@ -223,6 +227,28 @@ func raid(b *parser.Builder) (ok bool) {
 	if !b.Match(tokenizer.Token{Kind: tokenizer.PERCENTAGE}) {
 		return false
 	}
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT}) {
+		return false
+	}
+	return b.Match(tokenizer.Token{Kind: tokenizer.EOL})
+}
+
+func retool(b *parser.Builder) (ok bool) {
+	b.Enter("retool")
+	defer b.Exit(&ok)
+	// command
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "retool"}) {
+		return false
+	}
+	// csid
+	if !b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
+		return false
+	}
+	// factgroup
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT}) {
+		return false
+	}
+	// product or research
 	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT}) {
 		return false
 	}

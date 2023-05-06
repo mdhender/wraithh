@@ -20,6 +20,7 @@ const (
 	EOF Kind = iota
 	EOL
 	COMMA
+	COMMENT
 	INTEGER
 	PARENCL
 	PARENOP
@@ -37,6 +38,8 @@ func (k Kind) String() string {
 		return "EOL"
 	case COMMA:
 		return "COMMA"
+	case COMMENT:
+		return "COMMENT"
 	case INTEGER:
 		return "INTEGER"
 	case PARENCL:

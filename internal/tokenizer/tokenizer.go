@@ -33,6 +33,17 @@ func Tokens(input []byte) (tokens []*Token) {
 	return tokens
 }
 
+// RemoveComments removes comments from the tokens.
+func RemoveComments(input []*Token) (tokens []*Token) {
+	for _, token := range input {
+		if token.Kind == COMMENT {
+			continue
+		}
+		tokens = append(tokens, token)
+	}
+	return tokens
+}
+
 // RemoveEmptyLines removed empty lines from the tokens.
 func RemoveEmptyLines(input []*Token) (tokens []*Token) {
 	prior := &Token{Kind: EOL}
@@ -77,6 +88,14 @@ func Next(buffer []byte) (kind Kind, lexeme, rest []byte) {
 		return PARENOP, buffer[:1], buffer[1:]
 	}
 
+	// if it is a comment, consume to end of line
+	if buffer[0] == ';' {
+		for len(buffer) != 0 && buffer[0] != '\n' {
+			buffer = buffer[1:]
+		}
+		return COMMENT, nil, buffer
+	}
+
 	r, w := utf8.DecodeRune(buffer)
 
 	// if it is whitespace (which includes invalid runes but not new-lines),
@@ -105,8 +124,8 @@ func Next(buffer []byte) (kind Kind, lexeme, rest []byte) {
 			lexeme, buffer = append(lexeme, buffer[:w]...), buffer[w:]
 			r, w = utf8.DecodeRune(buffer)
 		}
-		// must be terminated by a delimter (space, eol, eof, comma, parentheses)
-		if r == '\n' || isspace(r) || r == ',' || r == '(' || r == ')' {
+		// must be terminated by a delimiter (space, eol, eof, comma, parentheses, comment)
+		if r == '\n' || isspace(r) || r == ',' || r == '(' || r == ')' || r == ';' {
 			return kind, lexeme, buffer
 		}
 		// it's not an integer or percentage, so fall through
