@@ -21,6 +21,7 @@ const (
 	EOL
 	COMMA
 	COMMENT
+	FACTGRP
 	INTEGER
 	PARENCL
 	PARENOP
@@ -44,6 +45,8 @@ func (k Kind) String() string {
 		return "COMMA"
 	case COMMENT:
 		return "COMMENT"
+	case FACTGRP:
+		return "FACTGRP"
 	case INTEGER:
 		return "INTEGER"
 	case PARENCL:

@@ -10,7 +10,7 @@ const Grammar = `
 	order = assemble | bombard | invade | raid | setup | support .
 
 	assemble    = "assemble"    CSID [DEPOSITID | FACTGRP | MINEGRP] QUANTITY material EOL .
-	disassemble = "disassemble" CSID [DEPOSITID | FACTGRP | MINEGRP] QUANTITY material EOL .
+	disassemble = "disassemble" CSID [            FACTGRP | MINEGRP] QUANTITY material EOL .
 	retool      = "retool"      CSID FACTGRP material EOL .
 	material    = "research" | PRODUCT .
 

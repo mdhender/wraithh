@@ -167,6 +167,12 @@ func Next(buffer []byte) (kind Kind, lexeme, rest []byte) {
 		return POPULATION, lexeme, buffer
 	}
 
+	if strings.HasPrefix(lval, "fg-") {
+		if _, err := strconv.Atoi(lval[3:]); err == nil {
+			return FACTGRP, lexeme, buffer
+		}
+	}
+
 	// product will be xxx, xxx-yyy, or xxx-yyy-tl
 	// if product includes tl, we must extract it.
 	var product string

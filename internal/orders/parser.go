@@ -92,7 +92,7 @@ func assemble(b *parser.Builder) (ok bool) {
 		return false
 	}
 	// optional factory group, deposit id, or mining group
-	if b.Match(tokenizer.Token{Kind: tokenizer.TEXT}) {
+	if b.Match(tokenizer.Token{Kind: tokenizer.FACTGRP}) || b.Match(tokenizer.Token{Kind: tokenizer.TEXT}) {
 		// do something
 	}
 	// quantity
@@ -180,8 +180,8 @@ func disassemble(b *parser.Builder) (ok bool) {
 	if !b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
 		return false
 	}
-	// optional factory group, deposit id, or mining group
-	if b.Match(tokenizer.Token{Kind: tokenizer.TEXT}) {
+	// optional factory group or mining group
+	if b.Match(tokenizer.Token{Kind: tokenizer.FACTGRP}) || b.Match(tokenizer.Token{Kind: tokenizer.TEXT}) {
 		// do something
 	}
 	// quantity
@@ -255,7 +255,7 @@ func retool(b *parser.Builder) (ok bool) {
 		return false
 	}
 	// factgroup
-	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT}) {
+	if !b.Match(tokenizer.Token{Kind: tokenizer.FACTGRP}) {
 		return false
 	}
 	// material
