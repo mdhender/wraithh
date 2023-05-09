@@ -27,6 +27,8 @@ const Grammar = `
 	buy  = "buy"  CSID (RESEARCH | (PRODUCT INTEGER)) number EOL .
 	sell = "sell" CSID (RESEARCH | (PRODUCT INTEGER)) number EOL .
 
+	survey = "survey" CSID EOL .
+
 	cargo       = POPULATION | PRODUCT | RESEARCH | RESOURCE .
 	coordinate  = PARENOP INTEGER COMMA INTEGER COMMA INTEGER [COMMA INTEGER] PARENCL .
 	material    = "research" | PRODUCT .

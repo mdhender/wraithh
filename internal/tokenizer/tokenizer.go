@@ -27,11 +27,12 @@ func Tokens(input []byte) (tokens []*Token) {
 			line++
 		}
 	}
-	if len(tokens) == 0 {
-		tokens = append(tokens, &Token{Line: 0, Kind: EOF})
-	} else if tokens[len(tokens)-1].Kind != EOF {
-		tokens = append(tokens, &Token{Line: line, Kind: EOF})
+	// force an end of line at the end of the input
+	if len(tokens) == 0 || tokens[len(tokens)-1].Kind != EOL {
+		tokens = append(tokens, &Token{Line: line, Kind: EOL})
 	}
+	// add an eof token
+	tokens = append(tokens, &Token{Line: line, Kind: EOF})
 	return tokens
 }
 

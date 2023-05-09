@@ -78,6 +78,8 @@ func order(b *parser.Builder) (ok bool) {
 		return setup(b)
 	} else if iskeyword(token, "support") {
 		return support(b)
+	} else if iskeyword(token, "survey") {
+		return survey(b)
 	} else if iskeyword(token, "transfer") {
 		return transfer(b)
 	}
@@ -392,6 +394,46 @@ func support(b *parser.Builder) (ok bool) {
 	return b.Match(tokenizer.Token{Kind: tokenizer.EOL})
 }
 
+func survey(b *parser.Builder) (ok bool) {
+	b.Enter("survey")
+	defer b.Exit(&ok)
+	// command
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "survey"}) {
+		return false
+	}
+	// csid
+	if !b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
+		return false
+	}
+	return b.Match(tokenizer.Token{Kind: tokenizer.EOL})
+}
+
+func transfer(b *parser.Builder) (ok bool) {
+	b.Enter("transfer")
+	defer b.Exit(&ok)
+	// command
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "transfer"}) {
+		return false
+	}
+	// csid
+	if !b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
+		return false
+	}
+	// quantity
+	if !b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
+		return false
+	}
+	// cargo
+	if !cargo(b) {
+		return false
+	}
+	// csid
+	if !b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
+		return false
+	}
+	return b.Match(tokenizer.Token{Kind: tokenizer.EOL})
+}
+
 func unknown(b *parser.Builder) (ok bool) {
 	b.Enter("unknown")
 	defer b.Exit(&ok)
@@ -425,32 +467,6 @@ func unknown(b *parser.Builder) (ok bool) {
 	}
 	token, _ := b.Peek(1)
 	panic(fmt.Sprintf("unknown token %s %q\n", token.Kind, token.Value))
-}
-
-func transfer(b *parser.Builder) (ok bool) {
-	b.Enter("transfer")
-	defer b.Exit(&ok)
-	// command
-	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "transfer"}) {
-		return false
-	}
-	// csid
-	if !b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
-		return false
-	}
-	// quantity
-	if !b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
-		return false
-	}
-	// cargo
-	if !cargo(b) {
-		return false
-	}
-	// csid
-	if !b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
-		return false
-	}
-	return b.Match(tokenizer.Token{Kind: tokenizer.EOL})
 }
 
 func xfer_detail(b *parser.Builder) (ok bool) {

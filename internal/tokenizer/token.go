@@ -55,7 +55,7 @@ func (k Kind) String() string {
 	case FLOAT:
 		return "FLOAT"
 	case INTEGER:
-		return "NUMBER"
+		return "INTEGER"
 	case MINEGRP:
 		return "MINEGRP"
 	case PARENCL:
