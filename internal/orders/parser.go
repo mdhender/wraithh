@@ -87,6 +87,8 @@ func order(b *parser.Builder) (ok bool) {
 		return invade(b)
 	} else if iskeyword(token, "move") {
 		return move(b)
+	} else if iskeyword(token, "name") {
+		return name(b)
 	} else if iskeyword(token, "news") {
 		return news(b)
 	} else if iskeyword(token, "pay") {
@@ -407,6 +409,28 @@ func move(b *parser.Builder) (ok bool) {
 	}
 	// coordinates
 	if !coordinate(b) {
+		return false
+	}
+	return b.Match(tokenizer.Token{Kind: tokenizer.EOL})
+}
+
+func name(b *parser.Builder) (ok bool) {
+	b.Enter("name")
+	defer b.Exit(&ok)
+	// command
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "name"}) {
+		return false
+	}
+	// coordinates or csid
+	if b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
+		// csid
+	} else if coordinate(b) {
+		// coordinates
+	} else {
+		return false
+	}
+	// name
+	if !b.Match(tokenizer.Token{Kind: tokenizer.QTEXT}) {
 		return false
 	}
 	return b.Match(tokenizer.Token{Kind: tokenizer.EOL})

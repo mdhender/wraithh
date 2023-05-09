@@ -44,6 +44,7 @@ const Grammar = `
 	ration = "ration" [CSID] PERCENTAGE EOL.
 
 	control = "control" CSID coordinate EOL .
+	abandon = "abandon"      coordinate EOL .
 
 	cargo       = POPULATION | PRODUCT | RESEARCH | RESOURCE .
 	coordinate  = PARENOP INTEGER COMMA INTEGER COMMA INTEGER [COMMA INTEGER] PARENCL .
