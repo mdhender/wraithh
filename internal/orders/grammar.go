@@ -9,20 +9,23 @@ const Grammar = `
 
 	order = assemble | bombard | invade | raid | retool | setup | support .
 
-	assemble    = "assemble"    CSID [DEPOSITID | FACTGRP | MINEGRP] QUANTITY material EOL .
-	disassemble = "disassemble" CSID [            FACTGRP | MINEGRP] QUANTITY material EOL .
-	retool      = "retool"      CSID FACTGRP material EOL .
-
 	bombard  = "bombard"  CSID CSID        PERCENTAGE       EOL .
 	invade   = "invade"   CSID CSID        PERCENTAGE       EOL .
 	raid     = "raid"     CSID CSID        PERCENTAGE cargo EOL .
 	support  = "support"  CSID CSID [CSID] PERCENTAGE       EOL .
 
-	transfer = "transfer" CSID QUANTITY cargo CSID EOL .
-
 	setup    = "setup"    CSID coordinate ("ship" | "colony") "transfer" EOL
 	           {xfer_detail}
 	           "end" EOL .
+
+	transfer = "transfer" CSID INTEGER cargo CSID EOL .
+
+	assemble    = "assemble"    CSID [DEPOSITID | FACTGRP | MINEGRP] INTEGER material EOL .
+	disassemble = "disassemble" CSID [            FACTGRP | MINEGRP] INTEGER material EOL .
+	retool      = "retool"      CSID FACTGRP material EOL .
+
+	buy  = "buy"  CSID (RESEARCH | (PRODUCT INTEGER)) number EOL .
+	sell = "sell" CSID (RESEARCH | (PRODUCT INTEGER)) number EOL .
 
 	cargo       = POPULATION | PRODUCT | RESEARCH | RESOURCE .
 	coordinate  = PARENOP INTEGER COMMA INTEGER COMMA INTEGER [COMMA INTEGER] PARENCL .

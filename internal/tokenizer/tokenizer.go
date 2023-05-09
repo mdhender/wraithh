@@ -121,7 +121,15 @@ func Next(buffer []byte) (kind Kind, lexeme, rest []byte) {
 			lexeme, buffer = append(lexeme, buffer[:w]...), buffer[w:]
 			r, w = utf8.DecodeRune(buffer)
 		}
-		if r == '%' {
+		if r == '.' && len(buffer) > 0 && isdigit(buffer[1]) { // may be a floating point number
+			kind = FLOAT
+			lexeme, buffer = append(lexeme, buffer[:w]...), buffer[w:]
+			r, w = utf8.DecodeRune(buffer)
+			for len(buffer) != 0 && unicode.IsDigit(r) {
+				lexeme, buffer = append(lexeme, buffer[:w]...), buffer[w:]
+				r, w = utf8.DecodeRune(buffer)
+			}
+		} else if r == '%' {
 			kind = PERCENTAGE
 			lexeme, buffer = append(lexeme, buffer[:w]...), buffer[w:]
 			r, w = utf8.DecodeRune(buffer)
@@ -142,11 +150,24 @@ func Next(buffer []byte) (kind Kind, lexeme, rest []byte) {
 	// most comparisons want lowercase text
 	lval := strings.ToLower(string(lexeme))
 
+	// is it a population group?
 	switch lval {
 	case "civilian":
 		return POPULATION, lexeme, buffer
 	case "construction-crew":
 		return POPULATION, lexeme, buffer
+	case "professional":
+		return POPULATION, lexeme, buffer
+	case "soldier":
+		return POPULATION, lexeme, buffer
+	case "spy":
+		return POPULATION, lexeme, buffer
+	case "unskilled-worker":
+		return POPULATION, lexeme, buffer
+	}
+
+	// is it a resource?
+	switch lval {
 	case "fuel":
 		return RESOURCE, lexeme, buffer
 	case "gold":
@@ -155,16 +176,6 @@ func Next(buffer []byte) (kind Kind, lexeme, rest []byte) {
 		return RESOURCE, lexeme, buffer
 	case "non-metallics":
 		return RESOURCE, lexeme, buffer
-	case "professional":
-		return POPULATION, lexeme, buffer
-	case "research":
-		return RESEARCH, lexeme, buffer
-	case "soldier":
-		return POPULATION, lexeme, buffer
-	case "spy":
-		return POPULATION, lexeme, buffer
-	case "unskilled-worker":
-		return POPULATION, lexeme, buffer
 	}
 
 	// is it a deposit id?
@@ -185,6 +196,15 @@ func Next(buffer []byte) (kind Kind, lexeme, rest []byte) {
 	if strings.HasPrefix(lval, "mg-") {
 		if _, err := strconv.Atoi(lval[3:]); err == nil {
 			return MINEGRP, lexeme, buffer
+		}
+	}
+
+	// is it research?
+	if lval == "research" {
+		return RESEARCH, lexeme, buffer
+	} else if strings.HasPrefix(lval, "tl-") {
+		if _, err := strconv.Atoi(lval[3:]); err == nil {
+			return RESEARCH, lexeme, buffer
 		}
 	}
 
@@ -230,7 +250,7 @@ func Next(buffer []byte) (kind Kind, lexeme, rest []byte) {
 		return PRODUCT, lexeme, buffer
 	case "life-support":
 		return PRODUCT, lexeme, buffer
-	case "light-structural-unit":
+	case "lsu", "light-structural-unit":
 		return PRODUCT, lexeme, buffer
 	case "military-robot":
 		return PRODUCT, lexeme, buffer
@@ -246,9 +266,9 @@ func Next(buffer []byte) (kind Kind, lexeme, rest []byte) {
 		return PRODUCT, lexeme, buffer
 	case "space-drive":
 		return PRODUCT, lexeme, buffer
-	case "structural-unit":
+	case "su", "structural-unit":
 		return PRODUCT, lexeme, buffer
-	case "super-light-structural-unit":
+	case "slsu", "super-light-structural-unit":
 		return PRODUCT, lexeme, buffer
 	case "transport":
 		return PRODUCT, lexeme, buffer

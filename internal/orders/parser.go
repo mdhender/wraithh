@@ -62,6 +62,8 @@ func order(b *parser.Builder) (ok bool) {
 		return assemble(b)
 	} else if iskeyword(token, "bombard") {
 		return bombard(b)
+	} else if iskeyword(token, "buy") {
+		return buy(b)
 	} else if iskeyword(token, "disassemble") {
 		return disassemble(b)
 	} else if iskeyword(token, "invade") {
@@ -70,6 +72,8 @@ func order(b *parser.Builder) (ok bool) {
 		return raid(b)
 	} else if iskeyword(token, "retool") {
 		return retool(b)
+	} else if iskeyword(token, "sell") {
+		return sell(b)
 	} else if iskeyword(token, "setup") {
 		return setup(b)
 	} else if iskeyword(token, "support") {
@@ -120,6 +124,35 @@ func bombard(b *parser.Builder) (ok bool) {
 		return false
 	}
 	if !b.Match(tokenizer.Token{Kind: tokenizer.PERCENTAGE}) {
+		return false
+	}
+	return b.Match(tokenizer.Token{Kind: tokenizer.EOL})
+}
+
+func buy(b *parser.Builder) (ok bool) {
+	b.Enter("buy")
+	defer b.Exit(&ok)
+	// command
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "buy"}) {
+		return false
+	}
+	// csid
+	if !b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
+		return false
+	}
+	// item may be research or a product
+	if b.Match(tokenizer.Token{Kind: tokenizer.RESEARCH}) {
+		// do something
+	} else if b.Match(tokenizer.Token{Kind: tokenizer.PRODUCT}) {
+		// quantity must be specified for product
+		if !b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
+			return false
+		}
+	} else {
+		return false
+	}
+	// price
+	if !number(b) {
 		return false
 	}
 	return b.Match(tokenizer.Token{Kind: tokenizer.EOL})
@@ -221,6 +254,13 @@ func material(b *parser.Builder) (ok bool) {
 	return b.Match(tokenizer.Token{Kind: tokenizer.PRODUCT}) || b.Match(tokenizer.Token{Kind: tokenizer.RESEARCH})
 }
 
+func number(b *parser.Builder) (ok bool) {
+	b.Enter("number")
+	defer b.Exit(&ok)
+	// float or integer
+	return b.Match(tokenizer.Token{Kind: tokenizer.FLOAT}) || b.Match(tokenizer.Token{Kind: tokenizer.INTEGER})
+}
+
 func raid(b *parser.Builder) (ok bool) {
 	b.Enter("raid")
 	defer b.Exit(&ok)
@@ -260,6 +300,35 @@ func retool(b *parser.Builder) (ok bool) {
 	}
 	// material
 	if !material(b) {
+		return false
+	}
+	return b.Match(tokenizer.Token{Kind: tokenizer.EOL})
+}
+
+func sell(b *parser.Builder) (ok bool) {
+	b.Enter("sell")
+	defer b.Exit(&ok)
+	// command
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "sell"}) {
+		return false
+	}
+	// csid
+	if !b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
+		return false
+	}
+	// item may be research or a product
+	if b.Match(tokenizer.Token{Kind: tokenizer.RESEARCH}) {
+		// do something
+	} else if b.Match(tokenizer.Token{Kind: tokenizer.PRODUCT}) {
+		// quantity must be specified for product
+		if !b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
+			return false
+		}
+	} else {
+		return false
+	}
+	// price
+	if !number(b) {
 		return false
 	}
 	return b.Match(tokenizer.Token{Kind: tokenizer.EOL})

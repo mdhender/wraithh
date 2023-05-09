@@ -23,6 +23,7 @@ const (
 	COMMENT
 	DEPOSITID
 	FACTGRP
+	FLOAT
 	INTEGER
 	MINEGRP
 	PARENCL
@@ -51,8 +52,10 @@ func (k Kind) String() string {
 		return "DEPOSITID"
 	case FACTGRP:
 		return "FACTGRP"
+	case FLOAT:
+		return "FLOAT"
 	case INTEGER:
-		return "INTEGER"
+		return "NUMBER"
 	case MINEGRP:
 		return "MINEGRP"
 	case PARENCL:
