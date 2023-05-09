@@ -81,6 +81,8 @@ func order(b *parser.Builder) (ok bool) {
 		return discharge(b)
 	} else if iskeyword(token, "draft") {
 		return draft(b)
+	} else if iskeyword(token, "grant") {
+		return grant(b)
 	} else if iskeyword(token, "incite-rebels") {
 		return spy(b)
 	} else if iskeyword(token, "invade") {
@@ -101,6 +103,8 @@ func order(b *parser.Builder) (ok bool) {
 		return ration(b)
 	} else if iskeyword(token, "retool") {
 		return retool(b)
+	} else if iskeyword(token, "revoke") {
+		return revoke(b)
 	} else if iskeyword(token, "sell") {
 		return sell(b)
 	} else if iskeyword(token, "setup") {
@@ -344,6 +348,32 @@ func draft(b *parser.Builder) (ok bool) {
 	return b.Match(tokenizer.Token{Kind: tokenizer.EOL})
 }
 
+func grant(b *parser.Builder) (ok bool) {
+	b.Enter("grant")
+	defer b.Exit(&ok)
+	// command
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "grant"}) {
+		return false
+	}
+	// coordinates
+	if !coordinate(b) {
+		return false
+	}
+	// colonize or trade
+	if b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "colonize"}) {
+		// colonize
+	} else if b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "trade"}) {
+		// trade
+	} else {
+		return false
+	}
+	// csid
+	if !b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
+		return false
+	}
+	return b.Match(tokenizer.Token{Kind: tokenizer.EOL})
+}
+
 func invade(b *parser.Builder) (ok bool) {
 	b.Enter("invade")
 	defer b.Exit(&ok)
@@ -542,6 +572,32 @@ func ration(b *parser.Builder) (ok bool) {
 	}
 	// percentage
 	if !b.Match(tokenizer.Token{Kind: tokenizer.PERCENTAGE}) {
+		return false
+	}
+	return b.Match(tokenizer.Token{Kind: tokenizer.EOL})
+}
+
+func revoke(b *parser.Builder) (ok bool) {
+	b.Enter("revoke")
+	defer b.Exit(&ok)
+	// command
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "revoke"}) {
+		return false
+	}
+	// coordinates
+	if !coordinate(b) {
+		return false
+	}
+	// colonize or trade
+	if b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "colonize"}) {
+		// colonize
+	} else if b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "trade"}) {
+		// trade
+	} else {
+		return false
+	}
+	// csid
+	if !b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
 		return false
 	}
 	return b.Match(tokenizer.Token{Kind: tokenizer.EOL})

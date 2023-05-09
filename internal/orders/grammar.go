@@ -46,6 +46,9 @@ const Grammar = `
 	control = "control" CSID coordinate EOL .
 	abandon = "abandon"      coordinate EOL .
 
+	grant  = "grant"  coordinate ("colonize" | "trade") CSID EOL.
+	revoke = "revoke" coordinate ("colonize" | "trade") CSID EOL.
+
 	cargo       = POPULATION | PRODUCT | RESEARCH | RESOURCE .
 	coordinate  = PARENOP INTEGER COMMA INTEGER COMMA INTEGER [COMMA INTEGER] PARENCL .
 	material    = "research" | PRODUCT .
