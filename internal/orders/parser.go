@@ -73,10 +73,16 @@ func order(b *parser.Builder) (ok bool) {
 		return spy(b)
 	} else if iskeyword(token, "disassemble") {
 		return disassemble(b)
+	} else if iskeyword(token, "disband") {
+		return disband(b)
+	} else if iskeyword(token, "draft") {
+		return draft(b)
 	} else if iskeyword(token, "incite-rebels") {
 		return spy(b)
 	} else if iskeyword(token, "invade") {
 		return invade(b)
+	} else if iskeyword(token, "move") {
+		return move(b)
 	} else if iskeyword(token, "news") {
 		return news(b)
 	} else if iskeyword(token, "probe") {
@@ -252,13 +258,58 @@ func disassemble(b *parser.Builder) (ok bool) {
 	return b.Match(tokenizer.Token{Kind: tokenizer.EOL})
 }
 
+func disband(b *parser.Builder) (ok bool) {
+	b.Enter("disband")
+	defer b.Exit(&ok)
+	// command
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "disband"}) {
+		return false
+	}
+	// csid
+	if !b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
+		return false
+	}
+	// quantity
+	if !b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
+		return false
+	}
+	// population
+	if !b.Match(tokenizer.Token{Kind: tokenizer.POPULATION}) {
+		return false
+	}
+	return b.Match(tokenizer.Token{Kind: tokenizer.EOL})
+}
+
+func draft(b *parser.Builder) (ok bool) {
+	b.Enter("draft")
+	defer b.Exit(&ok)
+	// command
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "draft"}) {
+		return false
+	}
+	// csid
+	if !b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
+		return false
+	}
+	// quantity
+	if !b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
+		return false
+	}
+	// population
+	if !b.Match(tokenizer.Token{Kind: tokenizer.POPULATION}) {
+		return false
+	}
+	return b.Match(tokenizer.Token{Kind: tokenizer.EOL})
+}
+
 func invade(b *parser.Builder) (ok bool) {
 	b.Enter("invade")
 	defer b.Exit(&ok)
-
+	// command
 	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "invade"}) {
 		return false
 	}
+	// csid
 	if !b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
 		return false
 	}
@@ -301,6 +352,24 @@ func mission(b *parser.Builder) (ok bool) {
 		return true
 	}
 	return false
+}
+
+func move(b *parser.Builder) (ok bool) {
+	b.Enter("move")
+	defer b.Exit(&ok)
+	// command
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "move"}) {
+		return false
+	}
+	// csid
+	if !b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
+		return false
+	}
+	// coordinates
+	if !coordinate(b) {
+		return false
+	}
+	return b.Match(tokenizer.Token{Kind: tokenizer.EOL})
 }
 
 func news(b *parser.Builder) (ok bool) {

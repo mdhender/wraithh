@@ -34,6 +34,8 @@ const Grammar = `
 
 	news = "news" coordinate TEXT TEXT EOL .
 
+	move = "move" CSID coordinate EOL .
+
 	cargo       = POPULATION | PRODUCT | RESEARCH | RESOURCE .
 	coordinate  = PARENOP INTEGER COMMA INTEGER COMMA INTEGER [COMMA INTEGER] PARENCL .
 	material    = "research" | PRODUCT .
