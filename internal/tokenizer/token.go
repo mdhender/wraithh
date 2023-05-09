@@ -25,6 +25,8 @@ const (
 	PARENCL
 	PARENOP
 	PERCENTAGE
+	PRODUCT
+	RESEARCH
 	SPACES
 	TEXT
 )
@@ -48,6 +50,10 @@ func (k Kind) String() string {
 		return "PARENOP"
 	case PERCENTAGE:
 		return "PERCENTAGE"
+	case PRODUCT:
+		return "PRODUCT"
+	case RESEARCH:
+		return "RESEARCH"
 	case SPACES:
 		return "SPACES"
 	case TEXT:

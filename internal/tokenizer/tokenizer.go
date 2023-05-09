@@ -6,6 +6,9 @@
 package tokenizer
 
 import (
+	"bytes"
+	"strconv"
+	"strings"
 	"unicode"
 	"unicode/utf8"
 )
@@ -136,6 +139,75 @@ func Next(buffer []byte) (kind Kind, lexeme, rest []byte) {
 		lexeme, buffer = append(lexeme, buffer[:w]...), buffer[w:]
 		r, w = utf8.DecodeRune(buffer)
 	}
+
+	// is it research?
+	if bytes.EqualFold(lexeme, []byte("research")) {
+		return RESEARCH, lexeme, buffer
+	}
+
+	// product will be xxx, xxx-yyy, or xxx-yyy-tl
+	// if product includes tl, we must extract it.
+	product := strings.ToLower(string(lexeme))
+	if fields := strings.Split(product, "-"); len(fields) == 1 {
+		// product is xxx
+	} else {
+		// product is xxx-yyy-tl or xxx-yyy
+		firstFields, lastField := fields[:len(fields)-1], fields[len(fields)-1]
+		if _, err := strconv.Atoi(lastField); err == nil {
+			// product is xxx-yyy-tl
+			product = strings.Join(firstFields, "-")
+		}
+	}
+	switch product {
+	case "anti-missile":
+		return PRODUCT, lexeme, buffer
+	case "assault-craft":
+		return PRODUCT, lexeme, buffer
+	case "assault-weapons":
+		return PRODUCT, lexeme, buffer
+	case "automation":
+		return PRODUCT, lexeme, buffer
+	case "consumer-goods":
+		return PRODUCT, lexeme, buffer
+	case "energy-shield":
+		return PRODUCT, lexeme, buffer
+	case "energy-weapon":
+		return PRODUCT, lexeme, buffer
+	case "factory":
+		return PRODUCT, lexeme, buffer
+	case "farm":
+		return PRODUCT, lexeme, buffer
+	case "food":
+		return PRODUCT, lexeme, buffer
+	case "hyper-engine":
+		return PRODUCT, lexeme, buffer
+	case "life-support":
+		return PRODUCT, lexeme, buffer
+	case "light-structural-unit":
+		return PRODUCT, lexeme, buffer
+	case "military-robot":
+		return PRODUCT, lexeme, buffer
+	case "military-supplies":
+		return PRODUCT, lexeme, buffer
+	case "mine":
+		return PRODUCT, lexeme, buffer
+	case "missile":
+		return PRODUCT, lexeme, buffer
+	case "missile-launcher":
+		return PRODUCT, lexeme, buffer
+	case "sensor":
+		return PRODUCT, lexeme, buffer
+	case "space-drive":
+		return PRODUCT, lexeme, buffer
+	case "structural-unit":
+		return PRODUCT, lexeme, buffer
+	case "super-light-structural-unit":
+		return PRODUCT, lexeme, buffer
+	case "transport":
+		return PRODUCT, lexeme, buffer
+	}
+
+	// otherwise it is just plain text
 	return TEXT, lexeme, buffer
 }
 

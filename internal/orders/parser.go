@@ -99,8 +99,8 @@ func assemble(b *parser.Builder) (ok bool) {
 	if !b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
 		return false
 	}
-	// product or research
-	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT}) {
+	// material
+	if !material(b) {
 		return false
 	}
 	return b.Match(tokenizer.Token{Kind: tokenizer.EOL})
@@ -123,6 +123,13 @@ func bombard(b *parser.Builder) (ok bool) {
 		return false
 	}
 	return b.Match(tokenizer.Token{Kind: tokenizer.EOL})
+}
+
+func cargo(b *parser.Builder) (ok bool) {
+	b.Enter("cargo")
+	defer b.Exit(&ok)
+	// population or product or research
+	return b.Match(tokenizer.Token{Kind: tokenizer.TEXT}) || b.Match(tokenizer.Token{Kind: tokenizer.PRODUCT}) || b.Match(tokenizer.Token{Kind: tokenizer.RESEARCH})
 }
 
 func coordinate(b *parser.Builder) (ok bool) {
@@ -178,8 +185,8 @@ func disassemble(b *parser.Builder) (ok bool) {
 	if !b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
 		return false
 	}
-	// product or research
-	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT}) {
+	// material
+	if !material(b) {
 		return false
 	}
 	return b.Match(tokenizer.Token{Kind: tokenizer.EOL})
@@ -207,8 +214,8 @@ func invade(b *parser.Builder) (ok bool) {
 func material(b *parser.Builder) (ok bool) {
 	b.Enter("material")
 	defer b.Exit(&ok)
-	// population or product or resource
-	return b.Match(tokenizer.Token{Kind: tokenizer.TEXT})
+	// product or research
+	return b.Match(tokenizer.Token{Kind: tokenizer.PRODUCT}) || b.Match(tokenizer.Token{Kind: tokenizer.RESEARCH})
 }
 
 func raid(b *parser.Builder) (ok bool) {
@@ -227,7 +234,7 @@ func raid(b *parser.Builder) (ok bool) {
 	if !b.Match(tokenizer.Token{Kind: tokenizer.PERCENTAGE}) {
 		return false
 	}
-	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT}) {
+	if !cargo(b) {
 		return false
 	}
 	return b.Match(tokenizer.Token{Kind: tokenizer.EOL})
@@ -248,8 +255,8 @@ func retool(b *parser.Builder) (ok bool) {
 	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT}) {
 		return false
 	}
-	// product or research
-	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT}) {
+	// material
+	if !material(b) {
 		return false
 	}
 	return b.Match(tokenizer.Token{Kind: tokenizer.EOL})
@@ -363,8 +370,8 @@ func transfer(b *parser.Builder) (ok bool) {
 	if !b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
 		return false
 	}
-	// material
-	if !material(b) {
+	// cargo
+	if !cargo(b) {
 		return false
 	}
 	// csid
@@ -381,7 +388,7 @@ func xfer_detail(b *parser.Builder) (ok bool) {
 	if !b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
 		return false
 	}
-	if !material(b) {
+	if !cargo(b) {
 		return false
 	}
 	return b.Match(tokenizer.Token{Kind: tokenizer.EOL})
