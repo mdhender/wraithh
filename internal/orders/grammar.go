@@ -36,6 +36,11 @@ const Grammar = `
 
 	move = "move" CSID coordinate EOL .
 
+	draft   = "draft"   CSID INTEGER POPULATION EOL.
+	disband = "disband" CSID INTEGER POPULATION EOL.
+
+	pay = "pay" [CSID] POPULATION NUMBER EOL.
+
 	cargo       = POPULATION | PRODUCT | RESEARCH | RESOURCE .
 	coordinate  = PARENOP INTEGER COMMA INTEGER COMMA INTEGER [COMMA INTEGER] PARENCL .
 	material    = "research" | PRODUCT .

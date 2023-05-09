@@ -73,8 +73,8 @@ func order(b *parser.Builder) (ok bool) {
 		return spy(b)
 	} else if iskeyword(token, "disassemble") {
 		return disassemble(b)
-	} else if iskeyword(token, "disband") {
-		return disband(b)
+	} else if iskeyword(token, "discharge") {
+		return discharge(b)
 	} else if iskeyword(token, "draft") {
 		return draft(b)
 	} else if iskeyword(token, "incite-rebels") {
@@ -85,6 +85,8 @@ func order(b *parser.Builder) (ok bool) {
 		return move(b)
 	} else if iskeyword(token, "news") {
 		return news(b)
+	} else if iskeyword(token, "pay") {
+		return pay(b)
 	} else if iskeyword(token, "probe") {
 		return probe(b)
 	} else if iskeyword(token, "raid") {
@@ -258,11 +260,11 @@ func disassemble(b *parser.Builder) (ok bool) {
 	return b.Match(tokenizer.Token{Kind: tokenizer.EOL})
 }
 
-func disband(b *parser.Builder) (ok bool) {
-	b.Enter("disband")
+func discharge(b *parser.Builder) (ok bool) {
+	b.Enter("discharge")
 	defer b.Exit(&ok)
 	// command
-	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "disband"}) {
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "discharge"}) {
 		return false
 	}
 	// csid
@@ -399,6 +401,28 @@ func number(b *parser.Builder) (ok bool) {
 	defer b.Exit(&ok)
 	// float or integer
 	return b.Match(tokenizer.Token{Kind: tokenizer.FLOAT}) || b.Match(tokenizer.Token{Kind: tokenizer.INTEGER})
+}
+
+func pay(b *parser.Builder) (ok bool) {
+	b.Enter("pay")
+	defer b.Exit(&ok)
+	// command
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "pay"}) {
+		return false
+	}
+	// optional csid
+	if b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
+		// do something
+	}
+	// population
+	if !b.Match(tokenizer.Token{Kind: tokenizer.POPULATION}) {
+		return false
+	}
+	// amount
+	if !number(b) {
+		return false
+	}
+	return b.Match(tokenizer.Token{Kind: tokenizer.EOL})
 }
 
 func probe(b *parser.Builder) (ok bool) {

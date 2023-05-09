@@ -178,7 +178,7 @@ func Next(buffer []byte) (kind Kind, lexeme, rest []byte) {
 		return POPULATION, lexeme, buffer
 	case "spy":
 		return POPULATION, lexeme, buffer
-	case "unskilled-worker":
+	case "unskilled-worker", "unsk":
 		return POPULATION, lexeme, buffer
 	}
 
