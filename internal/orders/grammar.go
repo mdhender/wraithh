@@ -7,7 +7,11 @@ package orders
 const Grammar = `
 	orders = {order | EOL} EOF .
 
-	order = assemble | bombard | invade | raid | retool | setup | support .
+	order = abandon | assemble | bombard | buy | check-rebels | control
+	      | convert-rebels | counter-agents | disassemble | discharge
+	      | draft | grant | incite-rebels | invade | move | name | news
+	      | pay | probe | raid | ration | retool | revoke | sell | setup
+	      | steal-reports | support | suppress-agents | survey | transfer .
 
 	bombard  = "bombard"  CSID CSID        PERCENTAGE       EOL .
 	invade   = "invade"   CSID CSID        PERCENTAGE       EOL .
