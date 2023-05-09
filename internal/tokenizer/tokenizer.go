@@ -167,9 +167,24 @@ func Next(buffer []byte) (kind Kind, lexeme, rest []byte) {
 		return POPULATION, lexeme, buffer
 	}
 
+	// is it a deposit id?
+	if strings.HasPrefix(lval, "dp-") {
+		if _, err := strconv.Atoi(lval[3:]); err == nil {
+			return DEPOSITID, lexeme, buffer
+		}
+	}
+
+	// is it a factory group?
 	if strings.HasPrefix(lval, "fg-") {
 		if _, err := strconv.Atoi(lval[3:]); err == nil {
 			return FACTGRP, lexeme, buffer
+		}
+	}
+
+	// is it a mining group?
+	if strings.HasPrefix(lval, "mg-") {
+		if _, err := strconv.Atoi(lval[3:]); err == nil {
+			return MINEGRP, lexeme, buffer
 		}
 	}
 

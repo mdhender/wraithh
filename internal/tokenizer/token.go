@@ -21,8 +21,10 @@ const (
 	EOL
 	COMMA
 	COMMENT
+	DEPOSITID
 	FACTGRP
 	INTEGER
+	MINEGRP
 	PARENCL
 	PARENOP
 	PERCENTAGE
@@ -45,10 +47,14 @@ func (k Kind) String() string {
 		return "COMMA"
 	case COMMENT:
 		return "COMMENT"
+	case DEPOSITID:
+		return "DEPOSITID"
 	case FACTGRP:
 		return "FACTGRP"
 	case INTEGER:
 		return "INTEGER"
+	case MINEGRP:
+		return "MINEGRP"
 	case PARENCL:
 		return "PARENCL"
 	case PARENOP:
