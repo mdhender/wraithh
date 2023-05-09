@@ -41,6 +41,8 @@ const Grammar = `
 
 	pay = "pay" [CSID] POPULATION NUMBER EOL.
 
+	ration = "ration" [CSID] PERCENTAGE EOL.
+
 	cargo       = POPULATION | PRODUCT | RESEARCH | RESOURCE .
 	coordinate  = PARENOP INTEGER COMMA INTEGER COMMA INTEGER [COMMA INTEGER] PARENCL .
 	material    = "research" | PRODUCT .

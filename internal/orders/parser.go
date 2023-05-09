@@ -91,6 +91,8 @@ func order(b *parser.Builder) (ok bool) {
 		return probe(b)
 	} else if iskeyword(token, "raid") {
 		return raid(b)
+	} else if iskeyword(token, "ration") {
+		return ration(b)
 	} else if iskeyword(token, "retool") {
 		return retool(b)
 	} else if iskeyword(token, "sell") {
@@ -462,6 +464,24 @@ func raid(b *parser.Builder) (ok bool) {
 		return false
 	}
 	if !cargo(b) {
+		return false
+	}
+	return b.Match(tokenizer.Token{Kind: tokenizer.EOL})
+}
+
+func ration(b *parser.Builder) (ok bool) {
+	b.Enter("ration")
+	defer b.Exit(&ok)
+	// command
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "ration"}) {
+		return false
+	}
+	// optional csid
+	if b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
+		// do something
+	}
+	// percentage
+	if !b.Match(tokenizer.Token{Kind: tokenizer.PERCENTAGE}) {
 		return false
 	}
 	return b.Match(tokenizer.Token{Kind: tokenizer.EOL})
