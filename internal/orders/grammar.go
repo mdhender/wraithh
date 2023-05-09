@@ -28,9 +28,14 @@ const Grammar = `
 	sell = "sell" CSID (RESEARCH | (PRODUCT INTEGER)) number EOL .
 
 	survey = "survey" CSID EOL .
+	probe  = "probe"  CSID (INTEGER | coordinates) EOL .
+
+	spy = mission CSID INTEGER [CSID] EOL .
 
 	cargo       = POPULATION | PRODUCT | RESEARCH | RESOURCE .
 	coordinate  = PARENOP INTEGER COMMA INTEGER COMMA INTEGER [COMMA INTEGER] PARENCL .
 	material    = "research" | PRODUCT .
+	mission     = "check-rebels" | "convert-rebels" | "counter-agents"
+	            | "suppress-agents" | "incite-rebels" | "steal-reports" .
 	xfer_detail = QUANTITY cargo TEXT EOL .
 `

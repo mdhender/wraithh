@@ -65,8 +65,16 @@ func order(b *parser.Builder) (ok bool) {
 		return bombard(b)
 	} else if iskeyword(token, "buy") {
 		return buy(b)
+	} else if iskeyword(token, "check-rebels") {
+		return spy(b)
+	} else if iskeyword(token, "convert-rebels") {
+		return spy(b)
+	} else if iskeyword(token, "counter-agents") {
+		return spy(b)
 	} else if iskeyword(token, "disassemble") {
 		return disassemble(b)
+	} else if iskeyword(token, "incite-rebels") {
+		return spy(b)
 	} else if iskeyword(token, "invade") {
 		return invade(b)
 	} else if iskeyword(token, "probe") {
@@ -79,13 +87,20 @@ func order(b *parser.Builder) (ok bool) {
 		return sell(b)
 	} else if iskeyword(token, "setup") {
 		return setup(b)
+	} else if iskeyword(token, "spy") {
+		return spy(b)
+	} else if iskeyword(token, "steal-reports") {
+		return spy(b)
 	} else if iskeyword(token, "support") {
 		return support(b)
+	} else if iskeyword(token, "suppress-agents") {
+		return spy(b)
 	} else if iskeyword(token, "survey") {
 		return survey(b)
 	} else if iskeyword(token, "transfer") {
 		return transfer(b)
 	}
+
 	return false
 }
 
@@ -262,6 +277,31 @@ func material(b *parser.Builder) (ok bool) {
 	return b.Match(tokenizer.Token{Kind: tokenizer.PRODUCT}) || b.Match(tokenizer.Token{Kind: tokenizer.RESEARCH})
 }
 
+func mission(b *parser.Builder) (ok bool) {
+	b.Enter("mission")
+	defer b.Exit(&ok)
+	// mission type
+	m, _ := b.Peek(1)
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT}) {
+		return false
+	}
+	switch strings.ToLower(m.Value) {
+	case "check-rebels":
+		return true
+	case "convert-rebels":
+		return true
+	case "counter-agents":
+		return true
+	case "suppress-agents":
+		return true
+	case "incite-rebels":
+		return true
+	case "steal-reports":
+		return true
+	}
+	return false
+}
+
 func number(b *parser.Builder) (ok bool) {
 	b.Enter("number")
 	defer b.Exit(&ok)
@@ -394,6 +434,28 @@ func setup(b *parser.Builder) (ok bool) {
 	}
 	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "end"}) {
 		return false
+	}
+	return b.Match(tokenizer.Token{Kind: tokenizer.EOL})
+}
+
+func spy(b *parser.Builder) (ok bool) {
+	b.Enter("spy")
+	defer b.Exit(&ok)
+	// command
+	if !mission(b) {
+		return false
+	}
+	// csid
+	if !b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
+		return false
+	}
+	// quantity
+	if !b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
+		return false
+	}
+	// optional target
+	if b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
+		// target
 	}
 	return b.Match(tokenizer.Token{Kind: tokenizer.EOL})
 }
