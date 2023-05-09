@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/mdhender/wraithh/internal/parser"
 	"github.com/mdhender/wraithh/internal/tokenizer"
+	"strconv"
 	"strings"
 )
 
@@ -68,6 +69,8 @@ func order(b *parser.Builder) (ok bool) {
 		return disassemble(b)
 	} else if iskeyword(token, "invade") {
 		return invade(b)
+	} else if iskeyword(token, "probe") {
+		return probe(b)
 	} else if iskeyword(token, "raid") {
 		return raid(b)
 	} else if iskeyword(token, "retool") {
@@ -192,11 +195,14 @@ func coordinate(b *parser.Builder) (ok bool) {
 	if !b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
 		return false
 	}
-	if p1, _ := b.Peek(1); p1 != nil && p1.Kind == tokenizer.COMMA {
-		if !b.Match(tokenizer.Token{Kind: tokenizer.COMMA}) {
+	// optional orbit. if present, must be in the range 1..10
+	if b.Match(tokenizer.Token{Kind: tokenizer.COMMA}) {
+		orbit, _ := b.Peek(1)
+		if !b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
 			return false
 		}
-		if !b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
+		// orbit must be 1..10
+		if n, _ := strconv.Atoi(orbit.Value); !(1 <= n && n <= 10) {
 			return false
 		}
 	}
@@ -261,6 +267,26 @@ func number(b *parser.Builder) (ok bool) {
 	defer b.Exit(&ok)
 	// float or integer
 	return b.Match(tokenizer.Token{Kind: tokenizer.FLOAT}) || b.Match(tokenizer.Token{Kind: tokenizer.INTEGER})
+}
+
+func probe(b *parser.Builder) (ok bool) {
+	b.Enter("probe")
+	defer b.Exit(&ok)
+
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "probe"}) {
+		return false
+	}
+	// csid
+	if !b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
+		return false
+	}
+	// orbit or coordinates
+	if b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
+		// orbit
+	} else if coordinate(b) {
+		// coordinates
+	}
+	return b.Match(tokenizer.Token{Kind: tokenizer.EOL})
 }
 
 func raid(b *parser.Builder) (ok bool) {
