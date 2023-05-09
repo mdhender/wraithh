@@ -111,6 +111,21 @@ func Next(buffer []byte) (kind Kind, lexeme, rest []byte) {
 		return SPACES, lexeme, buffer
 	}
 
+	// is it quoted text?
+	if r == '"' {
+		lexeme, buffer = append(lexeme, buffer[:w]...), buffer[w:]
+		r, w = utf8.DecodeRune(buffer)
+		for len(buffer) != 0 && r != '\n' && r != '"' {
+			lexeme, buffer = append(lexeme, buffer[:w]...), buffer[w:]
+			r, w = utf8.DecodeRune(buffer)
+		}
+		if r == '"' {
+			lexeme, buffer = append(lexeme, buffer[:w]...), buffer[w:]
+			r, w = utf8.DecodeRune(buffer)
+		}
+		return QTEXT, lexeme, buffer
+	}
+
 	// is it an integer or integer followed by a percent sign?
 	if unicode.IsDigit(r) || ((r == '-' || r == '+') && (len(buffer) != 0 && isdigit(buffer[1]))) {
 		kind = INTEGER

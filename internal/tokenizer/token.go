@@ -31,6 +31,7 @@ const (
 	PERCENTAGE
 	POPULATION
 	PRODUCT
+	QTEXT
 	RESEARCH
 	RESOURCE
 	SPACES
@@ -68,6 +69,8 @@ func (k Kind) String() string {
 		return "POPULATION"
 	case PRODUCT:
 		return "PRODUCT"
+	case QTEXT:
+		return "QTEXT"
 	case RESEARCH:
 		return "RESEARCH"
 	case RESOURCE:

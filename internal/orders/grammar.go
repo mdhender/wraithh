@@ -32,6 +32,8 @@ const Grammar = `
 
 	spy = mission CSID INTEGER [CSID] EOL .
 
+	news = "news" coordinate TEXT TEXT EOL .
+
 	cargo       = POPULATION | PRODUCT | RESEARCH | RESOURCE .
 	coordinate  = PARENOP INTEGER COMMA INTEGER COMMA INTEGER [COMMA INTEGER] PARENCL .
 	material    = "research" | PRODUCT .

@@ -77,6 +77,8 @@ func order(b *parser.Builder) (ok bool) {
 		return spy(b)
 	} else if iskeyword(token, "invade") {
 		return invade(b)
+	} else if iskeyword(token, "news") {
+		return news(b)
 	} else if iskeyword(token, "probe") {
 		return probe(b)
 	} else if iskeyword(token, "raid") {
@@ -221,7 +223,6 @@ func coordinate(b *parser.Builder) (ok bool) {
 			return false
 		}
 	}
-
 	return b.Match(tokenizer.Token{Kind: tokenizer.PARENCL})
 }
 
@@ -302,6 +303,28 @@ func mission(b *parser.Builder) (ok bool) {
 	return false
 }
 
+func news(b *parser.Builder) (ok bool) {
+	b.Enter("news")
+	defer b.Exit(&ok)
+	// command
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "news"}) {
+		return false
+	}
+	// coordinates (market or trade station)
+	if !coordinate(b) {
+		return false
+	}
+	// article
+	if !b.Match(tokenizer.Token{Kind: tokenizer.QTEXT}) {
+		return false
+	}
+	// signature
+	if !b.Match(tokenizer.Token{Kind: tokenizer.QTEXT}) {
+		return false
+	}
+	return b.Match(tokenizer.Token{Kind: tokenizer.EOL})
+}
+
 func number(b *parser.Builder) (ok bool) {
 	b.Enter("number")
 	defer b.Exit(&ok)
@@ -332,7 +355,7 @@ func probe(b *parser.Builder) (ok bool) {
 func raid(b *parser.Builder) (ok bool) {
 	b.Enter("raid")
 	defer b.Exit(&ok)
-
+	// command
 	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "raid"}) {
 		return false
 	}
