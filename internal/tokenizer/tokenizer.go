@@ -116,6 +116,14 @@ func Next(buffer []byte) (kind Kind, lexeme, rest []byte) {
 		lexeme, buffer = append(lexeme, buffer[:w]...), buffer[w:]
 		r, w = utf8.DecodeRune(buffer)
 		for len(buffer) != 0 && r != '\n' && r != '"' {
+			if r == '\\' {
+				// escaped quotes are accepted as part of the quoted string
+				if len(buffer) > 0 || buffer[1] == '"' {
+					// consume the escape character
+					r, w = utf8.DecodeRune(buffer)
+					buffer = buffer[w:]
+				}
+			}
 			lexeme, buffer = append(lexeme, buffer[:w]...), buffer[w:]
 			r, w = utf8.DecodeRune(buffer)
 		}
