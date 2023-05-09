@@ -8,10 +8,11 @@ const Grammar = `
 	orders = {order | EOL} EOF .
 
 	order = abandon | assemble | bombard | buy | check-rebels | control
-	      | convert-rebels | counter-agents | disassemble | discharge
+	      | convert-rebels | counter-agents | discharge
 	      | draft | grant | incite-rebels | invade | move | name | news
-	      | pay | probe | raid | ration | retool | revoke | sell | setup
-	      | steal-reports | support | suppress-agents | survey | transfer .
+	      | pay | probe | raid | ration | recycle | retool | revoke
+	      | scrap | sell | setup | steal-reports | store | support
+	      | suppress-agents | survey | transfer .
 
 	bombard  = "bombard"  CSID CSID        PERCENTAGE       EOL .
 	invade   = "invade"   CSID CSID        PERCENTAGE       EOL .
@@ -24,8 +25,11 @@ const Grammar = `
 
 	transfer = "transfer" CSID INTEGER cargo CSID EOL .
 
-	assemble    = "assemble"    CSID [DEPOSITID | FACTGRP | MINEGRP] INTEGER material EOL .
-	disassemble = "disassemble" CSID [            FACTGRP | MINEGRP] INTEGER material EOL .
+	assemble = "assemble" CSID [DEPOSITID | FACTGRP | MINEGRP] INTEGER material EOL .
+	recycle  = "recycle"  CSID [            FACTGRP | MINEGRP] INTEGER material EOL .
+	scrap    = "scrap"    CSID [            FACTGRP | MINEGRP] INTEGER material EOL .
+	store    = "store"    CSID [            FACTGRP | MINEGRP] INTEGER material EOL .
+
 	retool      = "retool"      CSID FACTGRP material EOL .
 
 	buy  = "buy"  CSID (RESEARCH | (PRODUCT INTEGER)) number EOL .

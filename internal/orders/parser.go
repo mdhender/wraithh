@@ -75,8 +75,6 @@ func order(b *parser.Builder) (ok bool) {
 		return spy(b)
 	} else if iskeyword(token, "counter-agents") {
 		return spy(b)
-	} else if iskeyword(token, "disassemble") {
-		return disassemble(b)
 	} else if iskeyword(token, "discharge") {
 		return discharge(b)
 	} else if iskeyword(token, "draft") {
@@ -101,10 +99,14 @@ func order(b *parser.Builder) (ok bool) {
 		return raid(b)
 	} else if iskeyword(token, "ration") {
 		return ration(b)
+	} else if iskeyword(token, "recycle") {
+		return recycle(b)
 	} else if iskeyword(token, "retool") {
 		return retool(b)
 	} else if iskeyword(token, "revoke") {
 		return revoke(b)
+	} else if iskeyword(token, "scrap") {
+		return scrap(b)
 	} else if iskeyword(token, "sell") {
 		return sell(b)
 	} else if iskeyword(token, "setup") {
@@ -113,6 +115,8 @@ func order(b *parser.Builder) (ok bool) {
 		return spy(b)
 	} else if iskeyword(token, "steal-reports") {
 		return spy(b)
+	} else if iskeyword(token, "store") {
+		return store(b)
 	} else if iskeyword(token, "support") {
 		return support(b)
 	} else if iskeyword(token, "suppress-agents") {
@@ -276,32 +280,6 @@ func coordinate(b *parser.Builder) (ok bool) {
 		}
 	}
 	return b.Match(tokenizer.Token{Kind: tokenizer.PARENCL})
-}
-
-func disassemble(b *parser.Builder) (ok bool) {
-	b.Enter("disassemble")
-	defer b.Exit(&ok)
-	// command
-	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "disassemble"}) {
-		return false
-	}
-	// csid
-	if !b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
-		return false
-	}
-	// optional factory group or mining group
-	if b.Match(tokenizer.Token{Kind: tokenizer.FACTGRP}) || b.Match(tokenizer.Token{Kind: tokenizer.MINEGRP}) {
-		// do something
-	}
-	// quantity
-	if !b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
-		return false
-	}
-	// material
-	if !material(b) {
-		return false
-	}
-	return b.Match(tokenizer.Token{Kind: tokenizer.EOL})
 }
 
 func discharge(b *parser.Builder) (ok bool) {
@@ -577,6 +555,32 @@ func ration(b *parser.Builder) (ok bool) {
 	return b.Match(tokenizer.Token{Kind: tokenizer.EOL})
 }
 
+func recycle(b *parser.Builder) (ok bool) {
+	b.Enter("recycle")
+	defer b.Exit(&ok)
+	// command
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "recycle"}) {
+		return false
+	}
+	// csid
+	if !b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
+		return false
+	}
+	// optional factory group or mining group
+	if b.Match(tokenizer.Token{Kind: tokenizer.FACTGRP}) || b.Match(tokenizer.Token{Kind: tokenizer.MINEGRP}) {
+		// do something
+	}
+	// quantity
+	if !b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
+		return false
+	}
+	// material
+	if !material(b) {
+		return false
+	}
+	return b.Match(tokenizer.Token{Kind: tokenizer.EOL})
+}
+
 func revoke(b *parser.Builder) (ok bool) {
 	b.Enter("revoke")
 	defer b.Exit(&ok)
@@ -616,6 +620,32 @@ func retool(b *parser.Builder) (ok bool) {
 	}
 	// factgroup
 	if !b.Match(tokenizer.Token{Kind: tokenizer.FACTGRP}) {
+		return false
+	}
+	// material
+	if !material(b) {
+		return false
+	}
+	return b.Match(tokenizer.Token{Kind: tokenizer.EOL})
+}
+
+func scrap(b *parser.Builder) (ok bool) {
+	b.Enter("scrap")
+	defer b.Exit(&ok)
+	// command
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "scrap"}) {
+		return false
+	}
+	// csid
+	if !b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
+		return false
+	}
+	// optional factory group or mining group
+	if b.Match(tokenizer.Token{Kind: tokenizer.FACTGRP}) || b.Match(tokenizer.Token{Kind: tokenizer.MINEGRP}) {
+		// do something
+	}
+	// quantity
+	if !b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
 		return false
 	}
 	// material
@@ -712,6 +742,32 @@ func spy(b *parser.Builder) (ok bool) {
 	return b.Match(tokenizer.Token{Kind: tokenizer.EOL})
 }
 
+func store(b *parser.Builder) (ok bool) {
+	b.Enter("store")
+	defer b.Exit(&ok)
+	// command
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "store"}) {
+		return false
+	}
+	// csid
+	if !b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
+		return false
+	}
+	// optional factory group or mining group
+	if b.Match(tokenizer.Token{Kind: tokenizer.FACTGRP}) || b.Match(tokenizer.Token{Kind: tokenizer.MINEGRP}) {
+		// do something
+	}
+	// quantity
+	if !b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
+		return false
+	}
+	// material
+	if !material(b) {
+		return false
+	}
+	return b.Match(tokenizer.Token{Kind: tokenizer.EOL})
+}
+
 func support(b *parser.Builder) (ok bool) {
 	b.Enter("support")
 	defer b.Exit(&ok)
@@ -744,6 +800,10 @@ func survey(b *parser.Builder) (ok bool) {
 	// csid
 	if !b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
 		return false
+	}
+	// optional coordinates to survey
+	if coordinate(b) {
+		// coordinates to survey
 	}
 	return b.Match(tokenizer.Token{Kind: tokenizer.EOL})
 }
