@@ -59,7 +59,9 @@ func order(b *parser.Builder) (ok bool) {
 	defer b.Exit(&ok)
 
 	token, _ := b.Peek(1)
-	if iskeyword(token, "assemble") {
+	if iskeyword(token, "abandon") {
+		return abandon(b)
+	} else if iskeyword(token, "assemble") {
 		return assemble(b)
 	} else if iskeyword(token, "bombard") {
 		return bombard(b)
@@ -67,6 +69,8 @@ func order(b *parser.Builder) (ok bool) {
 		return buy(b)
 	} else if iskeyword(token, "check-rebels") {
 		return spy(b)
+	} else if iskeyword(token, "control") {
+		return control(b)
 	} else if iskeyword(token, "convert-rebels") {
 		return spy(b)
 	} else if iskeyword(token, "counter-agents") {
@@ -114,6 +118,20 @@ func order(b *parser.Builder) (ok bool) {
 	}
 
 	return false
+}
+
+func abandon(b *parser.Builder) (ok bool) {
+	b.Enter("abandon")
+	defer b.Exit(&ok)
+	// command
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "abandon"}) {
+		return false
+	}
+	// coordinates (orbit is optional)
+	if !coordinate(b) {
+		return false
+	}
+	return b.Match(tokenizer.Token{Kind: tokenizer.EOL})
 }
 
 func assemble(b *parser.Builder) (ok bool) {
@@ -198,6 +216,24 @@ func cargo(b *parser.Builder) (ok bool) {
 		b.Match(tokenizer.Token{Kind: tokenizer.PRODUCT}) ||
 		b.Match(tokenizer.Token{Kind: tokenizer.RESEARCH}) ||
 		b.Match(tokenizer.Token{Kind: tokenizer.RESOURCE})
+}
+
+func control(b *parser.Builder) (ok bool) {
+	b.Enter("control")
+	defer b.Exit(&ok)
+	// command
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "control"}) {
+		return false
+	}
+	// csid
+	if !b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
+		return false
+	}
+	// coordinates (must include orbit)
+	if !coordinate(b) {
+		return false
+	}
+	return b.Match(tokenizer.Token{Kind: tokenizer.EOL})
 }
 
 func coordinate(b *parser.Builder) (ok bool) {
