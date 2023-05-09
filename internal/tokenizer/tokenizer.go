@@ -6,7 +6,6 @@
 package tokenizer
 
 import (
-	"bytes"
 	"strconv"
 	"strings"
 	"unicode"
@@ -140,22 +139,49 @@ func Next(buffer []byte) (kind Kind, lexeme, rest []byte) {
 		r, w = utf8.DecodeRune(buffer)
 	}
 
-	// is it research?
-	if bytes.EqualFold(lexeme, []byte("research")) {
+	// most comparisons want lowercase text
+	lval := strings.ToLower(string(lexeme))
+
+	switch lval {
+	case "civilian":
+		return POPULATION, lexeme, buffer
+	case "construction-crew":
+		return POPULATION, lexeme, buffer
+	case "fuel":
+		return RESOURCE, lexeme, buffer
+	case "gold":
+		return RESOURCE, lexeme, buffer
+	case "metallics":
+		return RESOURCE, lexeme, buffer
+	case "non-metallics":
+		return RESOURCE, lexeme, buffer
+	case "professional":
+		return POPULATION, lexeme, buffer
+	case "research":
 		return RESEARCH, lexeme, buffer
+	case "soldier":
+		return POPULATION, lexeme, buffer
+	case "spy":
+		return POPULATION, lexeme, buffer
+	case "unskilled-worker":
+		return POPULATION, lexeme, buffer
 	}
 
 	// product will be xxx, xxx-yyy, or xxx-yyy-tl
 	// if product includes tl, we must extract it.
-	product := strings.ToLower(string(lexeme))
-	if fields := strings.Split(product, "-"); len(fields) == 1 {
+	var product string
+	if fields := strings.Split(lval, "-"); len(fields) == 1 {
 		// product is xxx
+		product = lval
 	} else {
 		// product is xxx-yyy-tl or xxx-yyy
 		firstFields, lastField := fields[:len(fields)-1], fields[len(fields)-1]
 		if _, err := strconv.Atoi(lastField); err == nil {
 			// product is xxx-yyy-tl
 			product = strings.Join(firstFields, "-")
+		} else {
+			// product is xxx-yyy
+			product = lval
 		}
 	}
 	switch product {

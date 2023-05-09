@@ -20,7 +20,7 @@ const Grammar = `
 	support  = "support"  CSID CSID [CSID] PERCENTAGE       EOL .
 
 	transfer = "transfer" CSID QUANTITY cargo CSID EOL .  
-	cargo = POPULATION | PRODUCT | RESOURCE .
+	cargo = POPULATION | PRODUCT | RESEARCH | RESOURCE .
 
 	setup    = "setup"    CSID coordinate ("ship" | "colony") "transfer" EOL
 	           {xfer_detail}

@@ -128,8 +128,11 @@ func bombard(b *parser.Builder) (ok bool) {
 func cargo(b *parser.Builder) (ok bool) {
 	b.Enter("cargo")
 	defer b.Exit(&ok)
-	// population or product or research
-	return b.Match(tokenizer.Token{Kind: tokenizer.TEXT}) || b.Match(tokenizer.Token{Kind: tokenizer.PRODUCT}) || b.Match(tokenizer.Token{Kind: tokenizer.RESEARCH})
+	// population or product or research or resource
+	return b.Match(tokenizer.Token{Kind: tokenizer.POPULATION}) ||
+		b.Match(tokenizer.Token{Kind: tokenizer.PRODUCT}) ||
+		b.Match(tokenizer.Token{Kind: tokenizer.RESEARCH}) ||
+		b.Match(tokenizer.Token{Kind: tokenizer.RESOURCE})
 }
 
 func coordinate(b *parser.Builder) (ok bool) {
