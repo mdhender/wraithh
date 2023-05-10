@@ -4,6 +4,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"github.com/mdhender/wraithh/internal/orders"
 	"github.com/mdhender/wraithh/internal/tokenizer"
@@ -13,29 +14,41 @@ import (
 
 func main() {
 	log.SetFlags(log.LstdFlags | log.LUTC)
-	if err := run(); err != nil {
+
+	debug := flag.Bool("debug", false, "log detailed parse output")
+	flag.Parse()
+
+	if err := run(*debug); err != nil {
 		log.Fatal(err)
 	}
 }
 
-func run() error {
-	fmt.Println("grammar:", orders.Grammar)
+func run(debug bool) error {
+	if debug {
+		fmt.Println("grammar:", orders.Grammar)
+	}
 
 	input, err := os.ReadFile("orders.txt")
 	if err != nil {
 		return err
 	}
 	tokens := tokenizer.RemoveEmptyLines(tokenizer.RemoveSpaces(tokenizer.RemoveComments(tokenizer.Tokens(input))))
-	for _, t := range tokens {
-		fmt.Printf("%3d: %10s %q\n", t.Line, t.Kind, string(t.Text))
+	if debug {
+		for _, t := range tokens {
+			fmt.Printf("%3d: %10s %q\n", t.Line, t.Kind, string(t.Text))
+		}
 	}
 
 	parseTree, debugTree, err := orders.Parse(tokens, true)
-	if err != nil {
+	if debug {
 		fmt.Print("Debug Tree:\n\n", debugTree)
+	}
+	if err != nil {
 		return err
 	}
-	fmt.Print("Parse Tree:\n\n", parseTree)
+	if debug {
+		fmt.Print("Parse Tree:\n\n", parseTree)
+	}
 
 	return nil
 }
