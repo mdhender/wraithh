@@ -7,9 +7,44 @@ import "fmt"
 
 // Token is a token from the input.
 type Token struct {
-	Line  int
-	Kind  Kind
-	Value string
+	Line    int
+	Kind    Kind
+	Float   float64
+	Integer int
+	Text    string
+}
+
+// String implements the Stringer interface.
+func (t Token) String() string {
+	switch t.Kind {
+	case COMMA:
+		return fmt.Sprintf("{%d ','}", t.Line)
+	case COMMENT:
+		return fmt.Sprintf("{%d ;...", t.Line)
+	case DEPOSITID, FACTGRP, MINEGRP, POPULATION, PRODUCT, RESEARCH, RESOURCE:
+		return fmt.Sprintf("{%d %s}", t.Line, t.Text)
+	case EOF:
+		return fmt.Sprintf("{%d $$}", t.Line)
+	case EOL:
+		return fmt.Sprintf("{%d '\\n'}", t.Line)
+	case FLOAT:
+		return fmt.Sprintf("{%d %g}", t.Line, t.Float)
+	case INTEGER:
+		return fmt.Sprintf("{%d %d}", t.Line, t.Integer)
+	case PARENCL:
+		return fmt.Sprintf("{%d ')'}", t.Line)
+	case PARENOP:
+		return fmt.Sprintf("{%d '('}", t.Line)
+	case PERCENTAGE:
+		return fmt.Sprintf("{%d %d%%}", t.Line, t.Integer)
+	case QTEXT:
+		return fmt.Sprintf("{%d `%s`}", t.Line, t.Text)
+	case SPACES:
+		return fmt.Sprintf("{%d ...", t.Line)
+	case TEXT:
+		return fmt.Sprintf("{%d %q}", t.Line, t.Text)
+	}
+	return fmt.Sprintf("{%d %s %q}", t.Line, t.Kind, t.Text)
 }
 
 // Kind is the type of token.

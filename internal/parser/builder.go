@@ -146,8 +146,8 @@ func (b *Builder) Match(want tokenizer.Token) (ok bool) {
 		return false
 	}
 	matches := want.Kind == token.Kind
-	if matches && want.Value != "" {
-		matches = want.Value == token.Value
+	if matches && want.Text != "" {
+		matches = want.Text == token.Text
 	}
 	if !matches {
 		b.current--

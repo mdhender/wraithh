@@ -21,7 +21,23 @@ func Tokens(input []byte) (tokens []*Token) {
 		token := &Token{Line: line}
 		var lexeme []byte
 		token.Kind, lexeme, input = Next(input)
-		token.Value = string(lexeme)
+		token.Text = string(lexeme)
+		switch token.Kind {
+		case DEPOSITID, FACTGRP, MINEGRP, POPULATION, PRODUCT, RESEARCH, RESOURCE:
+			token.Text = strings.ToUpper(token.Text)
+		case FLOAT:
+			token.Float, _ = strconv.ParseFloat(token.Text, 64)
+		case INTEGER:
+			token.Integer, _ = strconv.Atoi(token.Text)
+		case PERCENTAGE:
+			token.Integer, _ = strconv.Atoi(strings.TrimRight(token.Text, "%"))
+		case QTEXT:
+			if strings.HasSuffix(token.Text, `"`) {
+				token.Text = token.Text[1 : len(token.Text)-1]
+			} else {
+				token.Text = token.Text[1:]
+			}
+		}
 		tokens = append(tokens, token)
 		if token.Kind == EOL {
 			line++

@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"github.com/mdhender/wraithh/internal/parser"
 	"github.com/mdhender/wraithh/internal/tokenizer"
-	"strconv"
 	"strings"
 )
 
@@ -27,7 +26,7 @@ func iskeyword(token *tokenizer.Token, kw string) bool {
 	if token == nil || token.Kind != tokenizer.TEXT {
 		return false
 	}
-	return kw == strings.ToLower(token.Value)
+	return kw == strings.ToLower(token.Text)
 }
 
 func orders(b *parser.Builder) (ok bool) {
@@ -134,7 +133,7 @@ func abandon(b *parser.Builder) (ok bool) {
 	b.Enter("abandon")
 	defer b.Exit(&ok)
 	// command
-	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "abandon"}) {
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Text: "abandon"}) {
 		return false
 	}
 	// coordinates (orbit is optional)
@@ -148,7 +147,7 @@ func assemble(b *parser.Builder) (ok bool) {
 	b.Enter("assemble")
 	defer b.Exit(&ok)
 	// command
-	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "assemble"}) {
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Text: "assemble"}) {
 		return false
 	}
 	// csid
@@ -174,7 +173,7 @@ func bombard(b *parser.Builder) (ok bool) {
 	b.Enter("bombard")
 	defer b.Exit(&ok)
 
-	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "bombard"}) {
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Text: "bombard"}) {
 		return false
 	}
 	if !b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
@@ -193,7 +192,7 @@ func buy(b *parser.Builder) (ok bool) {
 	b.Enter("buy")
 	defer b.Exit(&ok)
 	// command
-	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "buy"}) {
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Text: "buy"}) {
 		return false
 	}
 	// csid
@@ -232,7 +231,7 @@ func control(b *parser.Builder) (ok bool) {
 	b.Enter("control")
 	defer b.Exit(&ok)
 	// command
-	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "control"}) {
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Text: "control"}) {
 		return false
 	}
 	// csid
@@ -275,7 +274,7 @@ func coordinate(b *parser.Builder) (ok bool) {
 			return false
 		}
 		// orbit must be 1..10
-		if n, _ := strconv.Atoi(orbit.Value); !(1 <= n && n <= 10) {
+		if !(1 <= orbit.Integer && orbit.Integer <= 10) {
 			return false
 		}
 	}
@@ -286,7 +285,7 @@ func discharge(b *parser.Builder) (ok bool) {
 	b.Enter("discharge")
 	defer b.Exit(&ok)
 	// command
-	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "discharge"}) {
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Text: "discharge"}) {
 		return false
 	}
 	// csid
@@ -308,7 +307,7 @@ func draft(b *parser.Builder) (ok bool) {
 	b.Enter("draft")
 	defer b.Exit(&ok)
 	// command
-	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "draft"}) {
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Text: "draft"}) {
 		return false
 	}
 	// csid
@@ -330,7 +329,7 @@ func grant(b *parser.Builder) (ok bool) {
 	b.Enter("grant")
 	defer b.Exit(&ok)
 	// command
-	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "grant"}) {
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Text: "grant"}) {
 		return false
 	}
 	// coordinates
@@ -338,9 +337,9 @@ func grant(b *parser.Builder) (ok bool) {
 		return false
 	}
 	// colonize or trade
-	if b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "colonize"}) {
+	if b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Text: "colonize"}) {
 		// colonize
-	} else if b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "trade"}) {
+	} else if b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Text: "trade"}) {
 		// trade
 	} else {
 		return false
@@ -356,7 +355,7 @@ func invade(b *parser.Builder) (ok bool) {
 	b.Enter("invade")
 	defer b.Exit(&ok)
 	// command
-	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "invade"}) {
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Text: "invade"}) {
 		return false
 	}
 	// csid
@@ -387,7 +386,7 @@ func mission(b *parser.Builder) (ok bool) {
 	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT}) {
 		return false
 	}
-	switch strings.ToLower(m.Value) {
+	switch strings.ToLower(m.Text) {
 	case "check-rebels":
 		return true
 	case "convert-rebels":
@@ -408,7 +407,7 @@ func move(b *parser.Builder) (ok bool) {
 	b.Enter("move")
 	defer b.Exit(&ok)
 	// command
-	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "move"}) {
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Text: "move"}) {
 		return false
 	}
 	// csid
@@ -426,7 +425,7 @@ func name(b *parser.Builder) (ok bool) {
 	b.Enter("name")
 	defer b.Exit(&ok)
 	// command
-	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "name"}) {
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Text: "name"}) {
 		return false
 	}
 	// coordinates or csid
@@ -448,7 +447,7 @@ func news(b *parser.Builder) (ok bool) {
 	b.Enter("news")
 	defer b.Exit(&ok)
 	// command
-	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "news"}) {
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Text: "news"}) {
 		return false
 	}
 	// coordinates (market or trade station)
@@ -477,7 +476,7 @@ func pay(b *parser.Builder) (ok bool) {
 	b.Enter("pay")
 	defer b.Exit(&ok)
 	// command
-	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "pay"}) {
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Text: "pay"}) {
 		return false
 	}
 	// optional csid
@@ -499,7 +498,7 @@ func probe(b *parser.Builder) (ok bool) {
 	b.Enter("probe")
 	defer b.Exit(&ok)
 
-	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "probe"}) {
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Text: "probe"}) {
 		return false
 	}
 	// csid
@@ -519,7 +518,7 @@ func raid(b *parser.Builder) (ok bool) {
 	b.Enter("raid")
 	defer b.Exit(&ok)
 	// command
-	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "raid"}) {
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Text: "raid"}) {
 		return false
 	}
 	if !b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
@@ -541,7 +540,7 @@ func ration(b *parser.Builder) (ok bool) {
 	b.Enter("ration")
 	defer b.Exit(&ok)
 	// command
-	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "ration"}) {
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Text: "ration"}) {
 		return false
 	}
 	// optional csid
@@ -559,7 +558,7 @@ func recycle(b *parser.Builder) (ok bool) {
 	b.Enter("recycle")
 	defer b.Exit(&ok)
 	// command
-	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "recycle"}) {
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Text: "recycle"}) {
 		return false
 	}
 	// csid
@@ -585,7 +584,7 @@ func revoke(b *parser.Builder) (ok bool) {
 	b.Enter("revoke")
 	defer b.Exit(&ok)
 	// command
-	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "revoke"}) {
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Text: "revoke"}) {
 		return false
 	}
 	// coordinates
@@ -593,9 +592,9 @@ func revoke(b *parser.Builder) (ok bool) {
 		return false
 	}
 	// colonize or trade
-	if b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "colonize"}) {
+	if b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Text: "colonize"}) {
 		// colonize
-	} else if b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "trade"}) {
+	} else if b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Text: "trade"}) {
 		// trade
 	} else {
 		return false
@@ -611,7 +610,7 @@ func retool(b *parser.Builder) (ok bool) {
 	b.Enter("retool")
 	defer b.Exit(&ok)
 	// command
-	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "retool"}) {
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Text: "retool"}) {
 		return false
 	}
 	// csid
@@ -633,7 +632,7 @@ func scrap(b *parser.Builder) (ok bool) {
 	b.Enter("scrap")
 	defer b.Exit(&ok)
 	// command
-	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "scrap"}) {
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Text: "scrap"}) {
 		return false
 	}
 	// csid
@@ -659,7 +658,7 @@ func sell(b *parser.Builder) (ok bool) {
 	b.Enter("sell")
 	defer b.Exit(&ok)
 	// command
-	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "sell"}) {
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Text: "sell"}) {
 		return false
 	}
 	// csid
@@ -688,7 +687,7 @@ func setup(b *parser.Builder) (ok bool) {
 	b.Enter("setup")
 	defer b.Exit(&ok)
 
-	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "setup"}) {
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Text: "setup"}) {
 		return false
 	}
 	if !b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
@@ -697,10 +696,10 @@ func setup(b *parser.Builder) (ok bool) {
 	if !coordinate(b) {
 		return false
 	}
-	if !(b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "ship"}) || b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "colony"})) {
+	if !(b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Text: "ship"}) || b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Text: "colony"})) {
 		return false
 	}
-	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "transfer"}) {
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Text: "transfer"}) {
 		return false
 	}
 	if !b.Match(tokenizer.Token{Kind: tokenizer.EOL}) {
@@ -710,11 +709,11 @@ func setup(b *parser.Builder) (ok bool) {
 		p1, _ := b.Peek(1)
 		if p1 == nil || p1.Kind == tokenizer.EOF {
 			break
-		} else if p1.Kind == tokenizer.TEXT && p1.Value == "end" {
+		} else if p1.Kind == tokenizer.TEXT && p1.Text == "end" {
 			break
 		}
 	}
-	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "end"}) {
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Text: "end"}) {
 		return false
 	}
 	return b.Match(tokenizer.Token{Kind: tokenizer.EOL})
@@ -746,7 +745,7 @@ func store(b *parser.Builder) (ok bool) {
 	b.Enter("store")
 	defer b.Exit(&ok)
 	// command
-	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "store"}) {
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Text: "store"}) {
 		return false
 	}
 	// csid
@@ -772,7 +771,7 @@ func support(b *parser.Builder) (ok bool) {
 	b.Enter("support")
 	defer b.Exit(&ok)
 
-	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "support"}) {
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Text: "support"}) {
 		return false
 	}
 	if !b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
@@ -794,7 +793,7 @@ func survey(b *parser.Builder) (ok bool) {
 	b.Enter("survey")
 	defer b.Exit(&ok)
 	// command
-	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "survey"}) {
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Text: "survey"}) {
 		return false
 	}
 	// csid
@@ -812,7 +811,7 @@ func transfer(b *parser.Builder) (ok bool) {
 	b.Enter("transfer")
 	defer b.Exit(&ok)
 	// command
-	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Value: "transfer"}) {
+	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Text: "transfer"}) {
 		return false
 	}
 	// csid
@@ -866,7 +865,7 @@ func unknown(b *parser.Builder) (ok bool) {
 		return true
 	}
 	token, _ := b.Peek(1)
-	panic(fmt.Sprintf("unknown token %s %q\n", token.Kind, token.Value))
+	panic(fmt.Sprintf("unknown token %s %q\n", token.Kind, token.Text))
 }
 
 func xfer_detail(b *parser.Builder) (ok bool) {

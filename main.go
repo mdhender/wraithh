@@ -27,7 +27,7 @@ func run() error {
 	}
 	tokens := tokenizer.RemoveEmptyLines(tokenizer.RemoveSpaces(tokenizer.RemoveComments(tokenizer.Tokens(input))))
 	for _, t := range tokens {
-		fmt.Printf("%3d: %10s %q\n", t.Line, t.Kind, string(t.Value))
+		fmt.Printf("%3d: %10s %q\n", t.Line, t.Kind, string(t.Text))
 	}
 
 	parseTree, debugTree, err := orders.Parse(tokens, true)
