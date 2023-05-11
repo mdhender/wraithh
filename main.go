@@ -6,7 +6,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/mdhender/wraithh/internal/adapters"
+	"github.com/mdhender/wraithh/internal/orders"
 	"log"
 	"os"
 )
@@ -27,11 +27,11 @@ func run(debug bool) error {
 	if err != nil {
 		return err
 	}
-	lexemes, err := adapters.Scan(input)
+	lexemes, err := orders.Scan(input)
 	if err != nil {
 		return err
 	}
-	for n, ods := range adapters.Parse(lexemes) {
+	for n, ods := range orders.Parse(lexemes) {
 		fmt.Println(n, ods)
 	}
 
