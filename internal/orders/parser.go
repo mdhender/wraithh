@@ -13,13 +13,17 @@ import (
 
 var stopOnFirstError = true
 
-func Parse(tokens []*tokenizer.Token, stop bool) (parseTree *parser.Tree, debugTree *parser.DebugTree, err error) {
+func Parse(tokens []*tokenizer.Token, stop, debug bool) ([]Order, error) {
 	stopOnFirstError = stop
 	b := parser.NewBuilder(tokens)
 	if ok := orders(b); !ok {
-		return nil, b.DebugTree(), b.Error()
+		fmt.Print("Debug Tree:\n\n", b.DebugTree())
+		return nil, b.Error()
 	}
-	return b.ParseTree(), b.DebugTree(), nil
+	if debug {
+		fmt.Print("Parse Tree:\n\n", b.ParseTree())
+	}
+	return ptOrdersWalker(b.ParseTree())
 }
 
 func iskeyword(token *tokenizer.Token, kw string) bool {
@@ -770,21 +774,25 @@ func store(b *parser.Builder) (ok bool) {
 func support(b *parser.Builder) (ok bool) {
 	b.Enter("support")
 	defer b.Exit(&ok)
-
+	// command
 	if !b.Match(tokenizer.Token{Kind: tokenizer.TEXT, Text: "support"}) {
 		return false
 	}
+	// csid
 	if !b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
 		return false
 	}
+	// support id
 	if !b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
 		return false
 	}
-	if b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
-		// optional
-	}
+	// pct committed
 	if !b.Match(tokenizer.Token{Kind: tokenizer.PERCENTAGE}) {
 		return false
+	}
+	// optional target id
+	if b.Match(tokenizer.Token{Kind: tokenizer.INTEGER}) {
+		// optional
 	}
 	return b.Match(tokenizer.Token{Kind: tokenizer.EOL})
 }

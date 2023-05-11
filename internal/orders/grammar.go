@@ -14,10 +14,10 @@ const Grammar = `
 	      | scrap | sell | setup | steal-reports | store | support
 	      | suppress-agents | survey | transfer .
 
-	bombard  = "bombard"  CSID CSID        PERCENTAGE       EOL .
-	invade   = "invade"   CSID CSID        PERCENTAGE       EOL .
-	raid     = "raid"     CSID CSID        PERCENTAGE cargo EOL .
-	support  = "support"  CSID CSID [CSID] PERCENTAGE       EOL .
+	bombard  = "bombard"  CSID PERCENTAGE CSID        EOL .
+	invade   = "invade"   CSID PERCENTAGE CSID        EOL .
+	raid     = "raid"     CSID PERCENTAGE CSID cargo  EOL .
+	support  = "support"  CSID PERCENTAGE CSID [CSID] EOL .
 
 	setup    = "setup"    CSID coordinate ("ship" | "colony") "transfer" EOL
 	           {xfer_detail}
