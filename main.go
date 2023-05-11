@@ -6,7 +6,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/mdhender/wraithh/internal/orders"
+	"github.com/mdhender/wraithh/parsers/orders"
 	"log"
 	"os"
 )
