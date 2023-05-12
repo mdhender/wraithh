@@ -318,6 +318,12 @@ type ScrapUnit struct {
 	Errors   []error
 }
 
+type Secret struct {
+	Line   int
+	Uuid   string
+	Errors []error
+}
+
 type Sell struct {
 	Line     int
 	Id       int     // id of unit being ordered

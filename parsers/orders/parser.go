@@ -69,6 +69,8 @@ func Parse(lexemes []*Lexeme) []any {
 			order, lexemes = parseRevoke(cmd, lexemes)
 		case "scrap":
 			order, lexemes = parseScrap(cmd, lexemes)
+		case "secret":
+			order, lexemes = parseSecret(cmd, lexemes)
 		case "sell":
 			order, lexemes = parseSell(cmd, lexemes)
 		case "setup":
@@ -334,6 +336,17 @@ func expectResource(l []*Lexeme) (string, []*Lexeme, error) {
 		return l[0].Text, l[1:], nil
 	}
 	return "", l, fmt.Errorf("want resource, got %q", l[0].Text)
+}
+
+func expectUuid(l []*Lexeme) (string, []*Lexeme, error) {
+	if len(l) == 0 {
+		return "", l, fmt.Errorf("want uuid, got eof")
+	}
+	switch l[0].Kind {
+	case UUID:
+		return l[0].Text, l[1:], nil
+	}
+	return "", l, fmt.Errorf("want uuid, got %q", l[0].Text)
 }
 
 func expectUnit(l []*Lexeme) (Unit, []*Lexeme, error) {
@@ -1201,6 +1214,20 @@ func parseScrapUnit(cmd *Lexeme, l []*Lexeme) (*ScrapUnit, []*Lexeme) {
 	}
 	if o.Unit, l, err = expectUnit(l); err != nil {
 		o.Errors = append(o.Errors, fmt.Errorf("unit: %w", err))
+		return o, eatLine(l)
+	}
+	if l, err = expectEOL(l); err != nil {
+		o.Errors = append(o.Errors, err)
+		return o, eatLine(l)
+	}
+	return o, l
+}
+
+func parseSecret(cmd *Lexeme, l []*Lexeme) (*Secret, []*Lexeme) {
+	var err error
+	o := &Secret{Line: cmd.Line}
+	if o.Uuid, l, err = expectUuid(l); err != nil {
+		o.Errors = append(o.Errors, fmt.Errorf("uuid: %w", err))
 		return o, eatLine(l)
 	}
 	if l, err = expectEOL(l); err != nil {

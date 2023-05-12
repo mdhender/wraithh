@@ -76,6 +76,7 @@ const (
 	RESOURCE
 	TECHLEVEL
 	TEXT
+	UUID
 )
 
 func Scan(buffer []byte) ([]*Lexeme, error) {
@@ -83,10 +84,33 @@ func Scan(buffer []byte) ([]*Lexeme, error) {
 	isdigit := func(ch byte) bool {
 		return '0' <= ch && ch <= '9'
 	}
+	// ishexdigit returns true if the byte is a hex digit
+	ishexdigit := func(ch byte) bool {
+		return ('0' <= ch && ch <= '9') || ('a' <= ch && ch <= 'f') || ('A' <= ch && ch <= 'F')
+	}
 	// isspace returns true if the rune is a space or invalid rune.
 	// A new-line is not considered a space.
 	isspace := func(r rune) bool {
 		return r != '\n' && (unicode.IsSpace(r) || r == utf8.RuneError)
+	}
+	// isuuid returns true if the lexeme looks like a UUID
+	isuuid := func(b []byte) bool {
+		if len(b) != 36 {
+			return false
+		}
+		for i, ch := range b {
+			switch i {
+			case 8, 13, 18, 23:
+				if ch != '-' {
+					return false
+				}
+			default:
+				if !ishexdigit(ch) {
+					return false
+				}
+			}
+		}
+		return true
 	}
 
 	next := func() *Lexeme {
@@ -189,6 +213,10 @@ func Scan(buffer []byte) ([]*Lexeme, error) {
 			for len(buffer) != 0 && !(r == ',' || r == ';' || r == '\n' || r == '(' || r == ')' || isspace(r)) {
 				lexeme, buffer = append(lexeme, buffer[:w]...), buffer[w:]
 				r, w = utf8.DecodeRune(buffer)
+			}
+
+			if isuuid(lexeme) {
+				return &Lexeme{Kind: UUID, Text: string(bytes.ToLower(lexeme))}
 			}
 
 			return &Lexeme{Kind: TEXT, Text: string(bytes.ToLower(lexeme))}
@@ -326,6 +354,8 @@ func Scan(buffer []byte) ([]*Lexeme, error) {
 					}
 				}
 			}
+		case UUID:
+			lexeme.Text = strings.ToLower(lexeme.Text)
 		}
 		lexemes = append(lexemes, lexeme)
 	}
