@@ -338,6 +338,17 @@ func expectResource(l []*Lexeme) (string, []*Lexeme, error) {
 	return "", l, fmt.Errorf("want resource, got %q", l[0].Text)
 }
 
+func expectText(l []*Lexeme) (string, []*Lexeme, error) {
+	if len(l) == 0 {
+		return "", l, fmt.Errorf("want text, got eof")
+	}
+	switch l[0].Kind {
+	case TEXT:
+		return l[0].Text, l[1:], nil
+	}
+	return "", l, fmt.Errorf("want text, got %q", l[0].Text)
+}
+
 func expectUuid(l []*Lexeme) (string, []*Lexeme, error) {
 	if len(l) == 0 {
 		return "", l, fmt.Errorf("want uuid, got eof")
@@ -854,11 +865,8 @@ func parseName(cmd *Lexeme, l []*Lexeme) (any, []*Lexeme) {
 		o.Errors = append(o.Errors, err)
 		return o, eatLine(l)
 	}
-	if location.Orbit == 0 {
-		return &NameSystem{Line: o.Line, Location: location, Name: name}, l
-	}
-	if 0 < location.Orbit && location.Orbit <= 10 {
-		return &NameOrbit{Line: o.Line, Location: location, Name: name}, l
+	if 0 <= location.Orbit && location.Orbit <= 10 {
+		return &Name{Line: o.Line, Location: location, Name: name}, l
 	}
 	o.Errors = append(o.Errors, fmt.Errorf("location: invalid orbit %d", location.Orbit))
 	return o, l
@@ -968,7 +976,7 @@ func parseRaid(cmd *Lexeme, l []*Lexeme) (*Raid, []*Lexeme) {
 		o.Errors = append(o.Errors, fmt.Errorf("targetId: %w", err))
 		return o, eatLine(l)
 	}
-	if o.TargetUnit.Unit, o.TargetUnit.TechLevel, l, err = expectCargo(l); err != nil {
+	if o.TargetUnit, l, err = expectUnit(l); err != nil {
 		o.Errors = append(o.Errors, fmt.Errorf("material: %w", err))
 		return o, eatLine(l)
 	}
@@ -1226,7 +1234,22 @@ func parseScrapUnit(cmd *Lexeme, l []*Lexeme) (*ScrapUnit, []*Lexeme) {
 func parseSecret(cmd *Lexeme, l []*Lexeme) (*Secret, []*Lexeme) {
 	var err error
 	o := &Secret{Line: cmd.Line}
-	if o.Uuid, l, err = expectUuid(l); err != nil {
+	if o.Handle, l, err = expectText(l); err != nil {
+		o.Errors = append(o.Errors, fmt.Errorf("handle: %w", err))
+		return o, eatLine(l)
+	}
+	if o.Game, l, err = expectText(l); err != nil {
+		o.Errors = append(o.Errors, fmt.Errorf("game: %w", err))
+		return o, eatLine(l)
+	} else if o.Game = strings.ToUpper(o.Game); !strings.HasPrefix(o.Game, "G") {
+		o.Errors = append(o.Errors, fmt.Errorf("game: invalid game %q", o.Game))
+		return o, eatLine(l)
+	}
+	if o.Turn, l, err = expectInteger(l); err != nil {
+		o.Errors = append(o.Errors, fmt.Errorf("turn: %w", err))
+		return o, eatLine(l)
+	}
+	if o.Token, l, err = expectUuid(l); err != nil {
 		o.Errors = append(o.Errors, fmt.Errorf("uuid: %w", err))
 		return o, eatLine(l)
 	}
