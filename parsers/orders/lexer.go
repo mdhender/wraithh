@@ -185,8 +185,8 @@ func Scan(buffer []byte) ([]*Lexeme, error) {
 				// it's not an integer or percentage, so fall through
 			}
 
-			// the lexeme is everything up to the next comment, new-line, or space
-			for len(buffer) != 0 && !(r == ';' || r == '\n' || isspace(r)) {
+			// the lexeme is everything up to the next comma, comment, new-line, or paren, or space
+			for len(buffer) != 0 && !(r == ',' || r == ';' || r == '\n' || r == '(' || r == ')' || isspace(r)) {
 				lexeme, buffer = append(lexeme, buffer[:w]...), buffer[w:]
 				r, w = utf8.DecodeRune(buffer)
 			}

@@ -5,6 +5,7 @@ package orders
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -44,6 +45,8 @@ func Parse(lexemes []*Lexeme) []any {
 			order, lexemes = parseInciteRebels(cmd, lexemes)
 		case "invade":
 			order, lexemes = parseInvade(cmd, lexemes)
+		case "jump":
+			order, lexemes = parseJump(cmd, lexemes)
 		case "move":
 			order, lexemes = parseMove(cmd, lexemes)
 		case "name":
@@ -120,16 +123,46 @@ func expectCargo(l []*Lexeme) (string, int, []*Lexeme, error) {
 	return "", 0, l, fmt.Errorf("want material, got %q", l[0].Text)
 }
 
+// coordinates are (x, y, z(suffix?)(, orbit)?)
 func expectCoordinates(l []*Lexeme) (Coordinates, []*Lexeme, error) {
+	var err error
 	if len(l) < 7 {
 		return Coordinates{}, l, fmt.Errorf("want coordinates, got eof")
 	}
-	for i, k := range []Kind{PARENOP, INTEGER, COMMA, INTEGER, COMMA, INTEGER} {
-		if l[i].Kind != k {
-			return Coordinates{}, l, fmt.Errorf("want coordinates, got %q", l[i].Text)
-		}
+	var c Coordinates
+	if l[0].Kind != PARENOP {
+		return Coordinates{}, l, fmt.Errorf("want coordinates, got %q", l[0].Text)
 	}
-	c := Coordinates{X: l[1].Integer, Y: l[3].Integer, Z: l[5].Integer}
+	if l[1].Kind == INTEGER {
+		c.X = l[1].Integer
+	} else {
+		return Coordinates{}, l, fmt.Errorf("want coordinates, got %q", l[1].Text)
+	}
+	if l[2].Kind != COMMA {
+		return Coordinates{}, l, fmt.Errorf("want coordinates, got %q", l[2].Text)
+	}
+	if l[3].Kind == INTEGER {
+		c.Y = l[3].Integer
+	} else {
+		return Coordinates{}, l, fmt.Errorf("want coordinates, got %q", l[3].Text)
+	}
+	if l[4].Kind != COMMA {
+		return Coordinates{}, l, fmt.Errorf("want coordinates, got %q", l[4].Text)
+	}
+	if l[5].Kind == INTEGER {
+		c.Z = l[5].Integer
+	} else if l[5].Kind == TEXT { // may have system suffix
+		prefix, suffix := l[5].Text[:len(l[5].Text)-1], strings.ToLower(l[5].Text[len(l[5].Text)-1:])
+		if c.Z, err = strconv.Atoi(prefix); err != nil {
+			return Coordinates{}, l, fmt.Errorf("want coordinates, got %q", l[3].Text)
+		}
+		if !("a" <= suffix && suffix <= "z") {
+			return Coordinates{}, l, fmt.Errorf("want coordinates, got %q", l[3].Text)
+		}
+		c.System = suffix
+	} else {
+		return Coordinates{}, l, fmt.Errorf("want coordinates, got %q", l[3].Text)
+	}
 	if l[6].Kind == PARENCL {
 		return c, l[7:], nil
 	}
@@ -741,6 +774,24 @@ func parseInvade(cmd *Lexeme, l []*Lexeme) (*Invade, []*Lexeme) {
 	return o, l
 }
 
+func parseJump(cmd *Lexeme, l []*Lexeme) (*Jump, []*Lexeme) {
+	var err error
+	o := &Jump{Line: cmd.Line}
+	if o.Id, l, err = expectInteger(l); err != nil {
+		o.Errors = append(o.Errors, fmt.Errorf("id: %w", err))
+		return o, eatLine(l)
+	}
+	if o.Location, l, err = expectCoordinates(l); err != nil {
+		o.Errors = append(o.Errors, fmt.Errorf("location: %w", err))
+		return o, eatLine(l)
+	}
+	if l, err = expectEOL(l); err != nil {
+		o.Errors = append(o.Errors, err)
+		return o, eatLine(l)
+	}
+	return o, l
+}
+
 func parseMove(cmd *Lexeme, l []*Lexeme) (*Move, []*Lexeme) {
 	var err error
 	o := &Move{Line: cmd.Line}
@@ -748,8 +799,11 @@ func parseMove(cmd *Lexeme, l []*Lexeme) (*Move, []*Lexeme) {
 		o.Errors = append(o.Errors, fmt.Errorf("id: %w", err))
 		return o, eatLine(l)
 	}
-	if o.Location, l, err = expectCoordinates(l); err != nil {
-		o.Errors = append(o.Errors, fmt.Errorf("location: %w", err))
+	if o.Orbit, l, err = expectInteger(l); err != nil {
+		o.Errors = append(o.Errors, fmt.Errorf("orbit: %w", err))
+		return o, eatLine(l)
+	} else if !(0 < o.Orbit && o.Orbit <= 10) {
+		o.Errors = append(o.Errors, fmt.Errorf("orbit: invalid orbit %d", o.Orbit))
 		return o, eatLine(l)
 	}
 	if l, err = expectEOL(l); err != nil {

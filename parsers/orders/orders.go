@@ -77,7 +77,15 @@ type ConvertRebels struct {
 
 type Coordinates struct { // location being set up
 	X, Y, Z int
+	System  string // suffix for multi-star system, A...Z
 	Orbit   int
+}
+
+func (c Coordinates) String() string {
+	if c.Orbit == 0 {
+		return fmt.Sprintf("(%d,%d,%d%s)", c.X, c.Y, c.Z, c.System)
+	}
+	return fmt.Sprintf("(%d,%d,%d%s, %d)", c.X, c.Y, c.Z, c.System, c.Orbit)
 }
 
 type CounterAgents struct {
@@ -145,11 +153,18 @@ type Invade struct {
 	Errors       []error
 }
 
-type Move struct {
+type Jump struct {
 	Line     int
 	Id       int         // id of unit being ordered
 	Location Coordinates // coordinates to move to
 	Errors   []error
+}
+
+type Move struct {
+	Line   int
+	Id     int // id of unit being ordered
+	Orbit  int // orbit to move to
+	Errors []error
 }
 
 type NameOrbit struct {
