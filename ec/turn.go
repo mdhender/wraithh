@@ -9,9 +9,6 @@ import (
 	"sort"
 )
 
-type Engine struct {
-	Orders []*Orders
-}
 type Orders struct {
 	Validated bool
 	Handle    string

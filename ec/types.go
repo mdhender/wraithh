@@ -5,6 +5,22 @@ package ec
 
 import "fmt"
 
+type Engine struct {
+	Game struct {
+		Id   string
+		Name string
+		Turn int
+	}
+	Players map[string]Player
+	Orders  []*Orders
+}
+
+type Player struct {
+	Id     string
+	Handle string
+	Nation string
+}
+
 type Coordinates struct { // location being set up
 	X, Y, Z int
 	System  string // suffix for multi-star system, A...Z

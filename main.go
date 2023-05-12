@@ -11,21 +11,33 @@ import (
 	"github.com/mdhender/wraithh/parsers/orders"
 	"log"
 	"os"
+	"path/filepath"
 )
 
 func main() {
 	log.SetFlags(log.LstdFlags | log.LUTC)
 
+	path := flag.String("path", "", "path to game data")
 	debug := flag.Bool("debug", false, "log detailed parse output")
 	flag.Parse()
+	if path == nil {
+		log.Fatal("missing path")
+	} else if *path = filepath.Clean(*path); *path == "." {
+		log.Fatal("path can't be .")
+	} else {
+		log.Printf("path is %q\n", *path)
+	}
 
-	if err := run(*debug); err != nil {
+	if err := run(*path, *debug); err != nil {
 		log.Fatal(err)
 	}
 }
 
-func run(debug bool) error {
-	e := &ec.Engine{}
+func run(path string, debug bool) error {
+	e, err := ec.LoadGame(path)
+	if err != nil {
+		return err
+	}
 
 	// load all the files
 	for _, name := range []string{"orders.txt"} {
@@ -49,10 +61,10 @@ func run(debug bool) error {
 		}
 	}
 
-	err := e.Process()
+	err = e.Process()
 	if err != nil {
 		return err
 	}
 
-	return nil
+	return e.SaveGame(path)
 }
