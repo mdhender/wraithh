@@ -64,7 +64,7 @@ func (e *Engine) GenerateCluster() error {
 			Coords: p,
 			Delta:  p.DistanceTo(Point{}),
 			Size:   0.75,
-			Color:  "Teal",
+			Color:  "Random",
 		})
 	}
 
@@ -111,32 +111,32 @@ func (e *Engine) GenerateCluster() error {
 		p.Id = id
 	}
 
-	for _, point := range systems {
-		// Black, Blue, Gray, Green, Magenta, Purple, Random, Red, Teal, White, Yellow
-		if point.Delta < 2 {
-			point.Color = "Random"
-		} else if point.Delta < 3 {
-			point.Color = "Black"
-		} else if point.Delta < 4 {
-			point.Color = "Blue"
-		} else if point.Delta < 6 {
-			point.Color = "Gray"
-		} else if point.Delta < 8 {
-			point.Color = "Green"
-		} else if point.Delta < 10 {
-			point.Color = "Magenta"
-		} else if point.Delta < 12 {
-			point.Color = "Purple"
-		} else if point.Delta < 14 {
-			point.Color = "Red"
-		} else if point.Delta < 16 {
-			point.Color = "Teal"
-		} else if point.Delta < 18 {
-			point.Color = "White"
-		} else {
-			point.Color = "Yellow"
-		}
-	}
+	//for _, point := range systems {
+	//	// Black, Blue, Gray, Green, Magenta, Purple, Random, Red, Teal, White, Yellow
+	//	if point.Delta < 2 {
+	//		point.Color = "Random"
+	//	} else if point.Delta < 3 {
+	//		point.Color = "Black"
+	//	} else if point.Delta < 4 {
+	//		point.Color = "Blue"
+	//	} else if point.Delta < 6 {
+	//		point.Color = "Gray"
+	//	} else if point.Delta < 8 {
+	//		point.Color = "Green"
+	//	} else if point.Delta < 10 {
+	//		point.Color = "Magenta"
+	//	} else if point.Delta < 12 {
+	//		point.Color = "Purple"
+	//	} else if point.Delta < 14 {
+	//		point.Color = "Red"
+	//	} else if point.Delta < 16 {
+	//		point.Color = "Teal"
+	//	} else if point.Delta < 18 {
+	//		point.Color = "White"
+	//	} else {
+	//		point.Color = "Yellow"
+	//	}
+	//}
 
 	var tmplFile = "D:/wraith.dev/wraithh/templates/cluster.gohtml"
 	ts, err := template.ParseFiles(tmplFile)
