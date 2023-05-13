@@ -4,14 +4,16 @@
 package ec
 
 type GameJS struct {
-	Id   string
-	Name string
-	Turn int
+	Id      string   `json:"id,omitempty"`
+	Name    string   `json:"name,omitempty"`
+	Turn    int      `json:"turn,omitempty"`
+	Players []string `json:"players,omitempty"`
 }
 
 type PlayerJS struct {
-	Handle string
-	Nation string
+	Handle string `json:"handle,omitempty"`
+	Secret string `json:"secret,omitempty"`
+	Nation string `json:"nation,omitempty"`
 }
 
 func LoadGame(path string) (*Engine, error) {
@@ -32,7 +34,9 @@ func LoadGame(path string) (*Engine, error) {
 	}
 	for k, player := range players {
 		e.Players[k] = Player{
+			Id:     k,
 			Handle: player.Handle,
+			Secret: player.Secret,
 			Nation: player.Nation,
 		}
 	}

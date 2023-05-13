@@ -14,6 +14,9 @@ func (e *Engine) SaveGame(path string) error {
 		Name: e.Game.Name,
 		Turn: e.Game.Turn,
 	}
+	for _, player := range e.Players {
+		game.Players = append(game.Players, player.Id)
+	}
 	if err := tojson(path, "game", game); err != nil {
 		return err
 	}
@@ -22,6 +25,7 @@ func (e *Engine) SaveGame(path string) error {
 	for k, player := range e.Players {
 		players[k] = PlayerJS{
 			Handle: player.Handle,
+			Secret: player.Secret,
 			Nation: player.Nation,
 		}
 	}

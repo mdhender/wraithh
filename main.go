@@ -4,33 +4,35 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"github.com/mdhender/wraithh/adapters"
+	"github.com/mdhender/wraithh/cli"
 	"github.com/mdhender/wraithh/ec"
 	"github.com/mdhender/wraithh/parsers/orders"
 	"log"
 	"os"
-	"path/filepath"
+	"time"
 )
 
 func main() {
+	started := time.Now()
+
 	log.SetFlags(log.LstdFlags | log.LUTC)
 
-	path := flag.String("path", "", "path to game data")
-	debug := flag.Bool("debug", false, "log detailed parse output")
-	flag.Parse()
-	if path == nil {
-		log.Fatal("missing path")
-	} else if *path = filepath.Clean(*path); *path == "." {
-		log.Fatal("path can't be .")
-	} else {
-		log.Printf("path is %q\n", *path)
+	if err := dotfiles("WRAITH"); err != nil {
+		log.Fatalf("main: %+v\n", err)
 	}
 
-	if err := run(*path, *debug); err != nil {
-		log.Fatal(err)
+	rv := 0
+	if err := cli.Execute(); err != nil {
+		log.Printf("\n%+v\n", err)
+		rv = 2
 	}
+
+	log.Printf("\n")
+	log.Printf("completed in %v\n", time.Now().Sub(started))
+
+	os.Exit(rv)
 }
 
 func run(path string, debug bool) error {

@@ -18,13 +18,22 @@ type Engine struct {
 type Player struct {
 	Id     string
 	Handle string
+	Secret string
 	Nation string
+}
+
+type Cluster struct {
+	Systems []System
 }
 
 type Coordinates struct { // location being set up
 	X, Y, Z int
 	System  string // suffix for multi-star system, A...Z
 	Orbit   int
+}
+
+type System struct {
+	Location Coordinates
 }
 
 func (c Coordinates) String() string {
