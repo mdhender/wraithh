@@ -32,6 +32,10 @@ type Coordinates struct { // location being set up
 	Orbit   int
 }
 
+type Point struct {
+	X, Y, Z float64
+}
+
 type System struct {
 	Location Coordinates
 }
