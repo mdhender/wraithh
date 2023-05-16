@@ -3,6 +3,8 @@
 
 package ec
 
+import "github.com/mdhender/wraithh/ec/types"
+
 type GameJS struct {
 	Id      string   `json:"id,omitempty"`
 	Name    string   `json:"name,omitempty"`
@@ -18,7 +20,7 @@ type PlayerJS struct {
 
 func LoadGame(path string) (*Engine, error) {
 	var e Engine
-	e.Players = make(map[string]Player)
+	e.Players = make(map[string]types.Player)
 
 	var game GameJS
 	if err := fromjson(path, "game", &game); err != nil {
@@ -33,7 +35,7 @@ func LoadGame(path string) (*Engine, error) {
 		return nil, err
 	}
 	for k, player := range players {
-		e.Players[k] = Player{
+		e.Players[k] = types.Player{
 			Id:     k,
 			Handle: player.Handle,
 			Secret: player.Secret,

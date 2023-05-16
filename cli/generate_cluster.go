@@ -5,7 +5,7 @@ package cli
 
 import (
 	"fmt"
-	"github.com/mdhender/wraithh/ec"
+	"github.com/mdhender/wraithh/generators/clusters"
 	"github.com/spf13/cobra"
 	"log"
 )
@@ -27,25 +27,24 @@ var cmdGenerateCluster = &cobra.Command{
 			return fmt.Errorf("radius must be at most 45")
 		}
 
-		optCluster := []ec.GenerateClusterOption{}
-		if opt, err := ec.SetKind(argsGenerateCluster.kind); err != nil {
+		optCluster := []clusters.Option{}
+		if opt, err := clusters.SetKind(argsGenerateCluster.kind); err != nil {
 			log.Fatal(err)
 		} else {
 			optCluster = append(optCluster, opt)
 		}
-		if opt, err := ec.SetSystems(128); err != nil {
+		if opt, err := clusters.SetSystems(128); err != nil {
 			log.Fatal(err)
 		} else {
 			optCluster = append(optCluster, opt)
 		}
-		if opt, err := ec.SetRadius(argsGenerateCluster.radius); err != nil {
+		if opt, err := clusters.SetRadius(argsGenerateCluster.radius); err != nil {
 			log.Fatal(err)
 		} else {
 			optCluster = append(optCluster, opt)
 		}
 
-		e := &ec.Engine{}
-		if err := e.GenerateCluster(optCluster...); err != nil {
+		if err := clusters.Generate(optCluster...); err != nil {
 			log.Fatal(err)
 		}
 		return nil

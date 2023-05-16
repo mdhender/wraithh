@@ -3,38 +3,40 @@
 
 package ec
 
+import "github.com/mdhender/wraithh/ec/types"
+
 type Abandon struct {
 	Line     int
-	Location Coordinates // location to be abandoned
+	Location types.Coordinates // location to be abandoned
 }
 
 func (o *Abandon) Execute() error { panic("!") }
 
 type AssembleFactoryGroup struct {
 	Line        int
-	Id          int  // id of unit being ordered
-	Quantity    int  // number of units to assemble
-	Unit        Unit // factory units to assemble
-	Manufacture Unit // product unit to be manufactured
+	Id          int        // id of unit being ordered
+	Quantity    int        // number of units to assemble
+	Unit        types.Unit // factory units to assemble
+	Manufacture types.Unit // product unit to be manufactured
 }
 
 func (o *AssembleFactoryGroup) Execute() error { panic("!") }
 
 type AssembleMineGroup struct {
 	Line      int
-	Id        int    // id of unit being ordered
-	DepositId string // deposit to assemble mines at
-	Quantity  int    // number of units to assemble
-	Unit      Unit   // mine units to assemble
+	Id        int        // id of unit being ordered
+	DepositId string     // deposit to assemble mines at
+	Quantity  int        // number of units to assemble
+	Unit      types.Unit // mine units to assemble
 }
 
 func (o *AssembleMineGroup) Execute() error { panic("!") }
 
 type AssembleUnit struct {
 	Line     int
-	Id       int  // id of unit being ordered
-	Quantity int  // number of units to assemble
-	Unit     Unit // unit to assemble
+	Id       int        // id of unit being ordered
+	Quantity int        // number of units to assemble
+	Unit     types.Unit // unit to assemble
 }
 
 func (o *AssembleUnit) Execute() error { panic("!") }
@@ -50,10 +52,10 @@ func (o *Bombard) Execute() error { panic("!") }
 
 type Buy struct {
 	Line     int
-	Id       int     // id of unit being ordered
-	Quantity int     // number of units to purchase
-	Unit     Unit    // unit to sell
-	Bid      float64 // bid per unit
+	Id       int        // id of unit being ordered
+	Quantity int        // number of units to purchase
+	Unit     types.Unit // unit to sell
+	Bid      float64    // bid per unit
 }
 
 func (o *Buy) Execute() error { panic("!") }
@@ -68,8 +70,8 @@ func (o *CheckRebels) Execute() error { panic("!") }
 
 type Claim struct {
 	Line     int
-	Id       int         // id of unit being ordered
-	Location Coordinates // location to be claimed
+	Id       int               // id of unit being ordered
+	Location types.Coordinates // location to be claimed
 }
 
 func (o *Claim) Execute() error { panic("!") }
@@ -110,29 +112,29 @@ func (o *Draft) Execute() error { panic("!") }
 
 type ExpandFactoryGroup struct {
 	Line         int
-	Id           int    // id of unit being ordered
-	FactoryGroup string // factory group to expand
-	Quantity     int    // number of units to assemble
-	Unit         Unit   // mine units to assemble
+	Id           int        // id of unit being ordered
+	FactoryGroup string     // factory group to expand
+	Quantity     int        // number of units to assemble
+	Unit         types.Unit // mine units to assemble
 }
 
 func (o *ExpandFactoryGroup) Execute() error { panic("!") }
 
 type ExpandMineGroup struct {
 	Line      int
-	Id        int    // id of unit being ordered
-	MineGroup string // mine group to expand
-	Quantity  int    // number of units to assemble
-	Unit      Unit   // mine units to assemble
+	Id        int        // id of unit being ordered
+	MineGroup string     // mine group to expand
+	Quantity  int        // number of units to assemble
+	Unit      types.Unit // mine units to assemble
 }
 
 func (o *ExpandMineGroup) Execute() error { panic("!") }
 
 type Grant struct {
 	Line     int
-	Location Coordinates // coordinates of system and orbit
-	Kind     string      // kind of grant
-	TargetId int         // nation to grant
+	Location types.Coordinates // coordinates of system and orbit
+	Kind     string            // kind of grant
+	TargetId int               // nation to grant
 }
 
 func (o *Grant) Execute() error { panic("!") }
@@ -157,8 +159,8 @@ func (o *Invade) Execute() error { panic("!") }
 
 type Jump struct {
 	Line     int
-	Id       int         // id of unit being ordered
-	Location Coordinates // coordinates to move to
+	Id       int               // id of unit being ordered
+	Location types.Coordinates // coordinates to move to
 }
 
 func (o *Jump) Execute() error { panic("!") }
@@ -173,8 +175,8 @@ func (o *Move) Execute() error { panic("!") }
 
 type Name struct {
 	Line     int
-	Location Coordinates // coordinates of system or planet to name
-	Name     string      // new name for unit
+	Location types.Coordinates // coordinates of system or planet to name
+	Name     string            // new name for unit
 }
 
 func (o *Name) Execute() error { panic("!") }
@@ -189,7 +191,7 @@ func (o *NameUnit) Execute() error { panic("!") }
 
 type News struct {
 	Line      int
-	Location  Coordinates // location to send news to
+	Location  types.Coordinates // location to send news to
 	Article   string
 	Signature string
 }
@@ -223,8 +225,8 @@ func (o *Probe) Execute() error { panic("!") }
 
 type ProbeSystem struct {
 	Line     int
-	Id       int         // id of unit being ordered
-	Location Coordinates // location to probe
+	Id       int               // id of unit being ordered
+	Location types.Coordinates // location to probe
 }
 
 func (o *ProbeSystem) Execute() error { panic("!") }
@@ -233,8 +235,8 @@ type Raid struct {
 	Line         int
 	Id           int // id of unit being ordered
 	PctCommitted int
-	TargetId     int  // id of unit being raided
-	TargetUnit   Unit // material to raid
+	TargetId     int        // id of unit being raided
+	TargetUnit   types.Unit // material to raid
 }
 
 func (o *Raid) Execute() error { panic("!") }
@@ -256,76 +258,76 @@ func (o *RationLocal) Execute() error { panic("!") }
 
 type RecycleFactoryGroup struct {
 	Line         int
-	Id           int    // id of unit being ordered
-	FactoryGroup string // factory group to recycle units from
-	Quantity     int    // number of units to recycle
-	Unit         Unit   // unit to recycle
+	Id           int        // id of unit being ordered
+	FactoryGroup string     // factory group to recycle units from
+	Quantity     int        // number of units to recycle
+	Unit         types.Unit // unit to recycle
 }
 
 func (o *RecycleFactoryGroup) Execute() error { panic("!") }
 
 type RecycleMineGroup struct {
 	Line      int
-	Id        int    // id of unit being ordered
-	MineGroup string // mine group to recycle units from
-	Quantity  int    // number of units to recycle
-	Unit      Unit   // unit to recycle
+	Id        int        // id of unit being ordered
+	MineGroup string     // mine group to recycle units from
+	Quantity  int        // number of units to recycle
+	Unit      types.Unit // unit to recycle
 }
 
 func (o *RecycleMineGroup) Execute() error { panic("!") }
 
 type RecycleUnit struct {
 	Line     int
-	Id       int  // id of unit being ordered
-	Quantity int  // number of units to recycle
-	Unit     Unit // unit to recycle
+	Id       int        // id of unit being ordered
+	Quantity int        // number of units to recycle
+	Unit     types.Unit // unit to recycle
 }
 
 func (o *RecycleUnit) Execute() error { panic("!") }
 
 type RetoolFactoryGroup struct {
 	Line         int
-	Id           int    // id of unit being ordered
-	FactoryGroup string // factory group to retool
-	Unit         Unit   // new unit to manufacture
+	Id           int        // id of unit being ordered
+	FactoryGroup string     // factory group to retool
+	Unit         types.Unit // new unit to manufacture
 }
 
 func (o *RetoolFactoryGroup) Execute() error { panic("!") }
 
 type Revoke struct {
 	Line     int
-	Location Coordinates // coordinates of system and orbit
-	Kind     string      // kind of grant
-	TargetId int         // nation to grant
+	Location types.Coordinates // coordinates of system and orbit
+	Kind     string            // kind of grant
+	TargetId int               // nation to grant
 }
 
 func (o *Revoke) Execute() error { panic("!") }
 
 type ScrapFactoryGroup struct {
 	Line         int
-	Id           int    // id of unit being ordered
-	FactoryGroup string // factory group to scrap units from
-	Quantity     int    // number of units to scrap
-	Unit         Unit   // unit to scrap
+	Id           int        // id of unit being ordered
+	FactoryGroup string     // factory group to scrap units from
+	Quantity     int        // number of units to scrap
+	Unit         types.Unit // unit to scrap
 }
 
 func (o *ScrapFactoryGroup) Execute() error { panic("!") }
 
 type ScrapMineGroup struct {
 	Line      int
-	Id        int    // id of unit being ordered
-	MineGroup string // mine group to scrap units from
-	Quantity  int    // number of units to scrap
-	Unit      Unit   // unit to scrap
+	Id        int        // id of unit being ordered
+	MineGroup string     // mine group to scrap units from
+	Quantity  int        // number of units to scrap
+	Unit      types.Unit // unit to scrap
 }
 
 func (o *ScrapMineGroup) Execute() error { panic("!") }
 
 type ScrapUnit struct {
 	Line     int
-	Id       int  // id of unit being ordered
-	Quantity int  // number of units to scrap
-	Unit     Unit // unit to scrap
+	Id       int        // id of unit being ordered
+	Quantity int        // number of units to scrap
+	Unit     types.Unit // unit to scrap
 }
 
 func (o *ScrapUnit) Execute() error { panic("!") }
@@ -342,21 +344,21 @@ func (o *Secret) Execute() error { panic("!") }
 
 type Sell struct {
 	Line     int
-	Id       int     // id of unit being ordered
-	Quantity int     // number of units to sell
-	Unit     Unit    // unit to sell
-	Ask      float64 // ask per unit
+	Id       int        // id of unit being ordered
+	Quantity int        // number of units to sell
+	Unit     types.Unit // unit to sell
+	Ask      float64    // ask per unit
 }
 
 func (o *Sell) Execute() error { panic("!") }
 
 type Setup struct {
 	Line     int
-	Id       int         // id of unit establishing ship or colony
-	Location Coordinates // location being set up
-	Kind     string      // must be 'colony' or 'ship'
-	Action   string      // must be 'transfer'
-	Items    []*TransferDetail
+	Id       int               // id of unit establishing ship or colony
+	Location types.Coordinates // location being set up
+	Kind     string            // must be 'colony' or 'ship'
+	Action   string            // must be 'transfer'
+	Items    []*types.TransferDetail
 }
 
 func (o *Setup) Execute() error { panic("!") }
@@ -372,29 +374,29 @@ func (o *StealSecrets) Execute() error { panic("!") }
 
 type StoreFactoryGroup struct {
 	Line         int
-	Id           int    // id of unit being ordered
-	FactoryGroup string // factory group to store units from
-	Quantity     int    // number of units to store
-	Unit         Unit   // unit to store
+	Id           int        // id of unit being ordered
+	FactoryGroup string     // factory group to store units from
+	Quantity     int        // number of units to store
+	Unit         types.Unit // unit to store
 }
 
 func (o *StoreFactoryGroup) Execute() error { panic("!") }
 
 type StoreMineGroup struct {
 	Line      int
-	Id        int    // id of unit being ordered
-	MineGroup string // mine group to store units from
-	Quantity  int    // number of units to store
-	Unit      Unit   // unit to store
+	Id        int        // id of unit being ordered
+	MineGroup string     // mine group to store units from
+	Quantity  int        // number of units to store
+	Unit      types.Unit // unit to store
 }
 
 func (o *StoreMineGroup) Execute() error { panic("!") }
 
 type StoreUnit struct {
 	Line     int
-	Id       int  // id of unit being ordered
-	Quantity int  // number of units to store
-	Unit     Unit // unit to store
+	Id       int        // id of unit being ordered
+	Quantity int        // number of units to store
+	Unit     types.Unit // unit to store
 }
 
 func (o *StoreUnit) Execute() error { panic("!") }
@@ -437,18 +439,18 @@ func (o *Survey) Execute() error { panic("!") }
 
 type SurveySystem struct {
 	Line     int
-	Id       int         // id of unit being ordered
-	Location Coordinates // location to survey
+	Id       int               // id of unit being ordered
+	Location types.Coordinates // location to survey
 }
 
 func (o *SurveySystem) Execute() error { panic("!") }
 
 type Transfer struct {
 	Line     int
-	Id       int  // id of unit being ordered
-	Quantity int  // number of units to transfer
-	Unit     Unit // unit to transfer
-	TargetId int  // id of unit receiving units
+	Id       int        // id of unit being ordered
+	Quantity int        // number of units to transfer
+	Unit     types.Unit // unit to transfer
+	TargetId int        // id of unit receiving units
 }
 
 func (o *Transfer) Execute() error { panic("!") }

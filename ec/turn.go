@@ -5,21 +5,12 @@ package ec
 
 import (
 	"fmt"
+	"github.com/mdhender/wraithh/ec/types"
 	"log"
 	"sort"
 )
 
-type Orders struct {
-	Validated bool
-	Handle    string
-	Game      string
-	Turn      int
-	Secret    *Secret
-	Orders    []Order
-	Error     error
-}
-
-func (e *Engine) AddOrders(orders []Order) error {
+func (e *Engine) AddOrders(orders []types.Order) error {
 	eo := &Orders{Orders: orders}
 	// gather secrets
 	for _, order := range eo.Orders {

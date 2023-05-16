@@ -1,19 +1,9 @@
 // Copyright (c) 2023 Michael D Henderson.
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-package ec
+package types
 
 import "fmt"
-
-type Engine struct {
-	Game struct {
-		Id   string
-		Name string
-		Turn int
-	}
-	Players map[string]Player
-	Orders  []*Orders
-}
 
 type Player struct {
 	Id     string

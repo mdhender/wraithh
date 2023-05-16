@@ -6,11 +6,12 @@ package adapters
 import (
 	"fmt"
 	"github.com/mdhender/wraithh/ec"
+	"github.com/mdhender/wraithh/ec/types"
 	"github.com/mdhender/wraithh/parsers/orders"
 )
 
-func CoordToEngineCoord(in orders.Coordinates) ec.Coordinates {
-	return ec.Coordinates{
+func CoordToEngineCoord(in orders.Coordinates) types.Coordinates {
+	return types.Coordinates{
 		X:      in.X,
 		Y:      in.Y,
 		Z:      in.Z,
@@ -18,22 +19,22 @@ func CoordToEngineCoord(in orders.Coordinates) ec.Coordinates {
 		Orbit:  in.Orbit,
 	}
 }
-func ItemsToEngineItems(in []*orders.TransferDetail) (out []*ec.TransferDetail) {
+func ItemsToEngineItems(in []*orders.TransferDetail) (out []*types.TransferDetail) {
 	for _, item := range in {
-		out = append(out, &ec.TransferDetail{
+		out = append(out, &types.TransferDetail{
 			Unit:     UnitToEngineUnit(item.Unit),
 			Quantity: item.Quantity,
 		})
 	}
 	return out
 }
-func UnitToEngineUnit(in orders.Unit) ec.Unit {
-	return ec.Unit{
+func UnitToEngineUnit(in orders.Unit) types.Unit {
+	return types.Unit{
 		Name:      in.Name,
 		TechLevel: in.TechLevel,
 	}
 }
-func OrdersToEngineOrders(in []any) (out []ec.Order) {
+func OrdersToEngineOrders(in []any) (out []types.Order) {
 	for _, o := range in {
 		switch order := o.(type) {
 		case *orders.Abandon:
