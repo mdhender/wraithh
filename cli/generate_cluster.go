@@ -26,8 +26,26 @@ var cmdGenerateCluster = &cobra.Command{
 		} else if argsGenerateCluster.radius > 45 {
 			return fmt.Errorf("radius must be at most 45")
 		}
+
+		optCluster := []ec.GenerateClusterOption{}
+		if opt, err := ec.SetKind(argsGenerateCluster.kind); err != nil {
+			log.Fatal(err)
+		} else {
+			optCluster = append(optCluster, opt)
+		}
+		if opt, err := ec.SetSystems(128); err != nil {
+			log.Fatal(err)
+		} else {
+			optCluster = append(optCluster, opt)
+		}
+		if opt, err := ec.SetRadius(argsGenerateCluster.radius); err != nil {
+			log.Fatal(err)
+		} else {
+			optCluster = append(optCluster, opt)
+		}
+
 		e := &ec.Engine{}
-		if err := e.GenerateCluster(argsGenerateCluster.kind, argsGenerateCluster.radius, 128); err != nil {
+		if err := e.GenerateCluster(optCluster...); err != nil {
 			log.Fatal(err)
 		}
 		return nil
