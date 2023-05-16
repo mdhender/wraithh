@@ -3,4 +3,9 @@
 
 package cluster
 
-type Cluster struct{}
+import "github.com/mdhender/wraithh/models/systems"
+
+type Cluster struct {
+	Radius  float64
+	Systems []*systems.System
+}

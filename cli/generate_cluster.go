@@ -28,6 +28,11 @@ var cmdGenerateCluster = &cobra.Command{
 		}
 
 		optCluster := []clusters.Option{}
+		if opt, err := clusters.CreateHtmlMap(argsGenerateCluster.mapFile); err != nil {
+			log.Fatal(err)
+		} else {
+			optCluster = append(optCluster, opt)
+		}
 		if opt, err := clusters.SetKind(argsGenerateCluster.kind); err != nil {
 			log.Fatal(err)
 		} else {
@@ -44,7 +49,7 @@ var cmdGenerateCluster = &cobra.Command{
 			optCluster = append(optCluster, opt)
 		}
 
-		if err := clusters.Generate(optCluster...); err != nil {
+		if _, err := clusters.Generate(optCluster...); err != nil {
 			log.Fatal(err)
 		}
 		return nil
@@ -52,8 +57,9 @@ var cmdGenerateCluster = &cobra.Command{
 }
 
 var argsGenerateCluster struct {
-	kind   string // uniform, cluster, surface
-	radius float64
+	kind    string // uniform, cluster, surface
+	mapFile string
+	radius  float64
 }
 
 func init() {
@@ -61,6 +67,7 @@ func init() {
 
 	// inputs
 	cmdGenerateCluster.Flags().StringVar(&argsGenerateCluster.kind, "kind", "uniform", "point distribution (uniform, cluster, sphere)")
+	cmdGenerateCluster.Flags().StringVar(&argsGenerateCluster.mapFile, "html-map", "", "name of map file to create (optional)")
 	cmdGenerateCluster.Flags().Float64Var(&argsGenerateCluster.radius, "radius", 15.0, "cluster radius")
 
 	// outputs

@@ -4,25 +4,28 @@
 package clusters
 
 import (
-	"fmt"
 	"github.com/mdhender/wraithh/generators/points"
+	"github.com/mdhender/wraithh/models/cluster"
 	"github.com/mdhender/wraithh/models/coordinates"
+	"github.com/mdhender/wraithh/models/systems"
 	"html/template"
 	"log"
 	"math"
 	"os"
 )
 
-func Generate(options ...Option) error {
+// Generate creates a new cluster.
+func Generate(options ...Option) (*cluster.Cluster, error) {
 	cfg := config{
-		initSystems: 128,
-		pgen:        points.ClusteredPoint,
-		radius:      15.0,
-		sphereSize:  15.0 / 45.0,
+		initSystems:   128,
+		pgen:          points.ClusteredPoint,
+		radius:        15.0,
+		sphereSize:    15.0 / 45.0,
+		templatesPath: "D:/wraith.dev/wraithh/templates/cluster.gohtml",
 	}
 	for _, opt := range options {
 		if err := opt(&cfg); err != nil {
-			return err
+			return nil, err
 		}
 	}
 
@@ -47,7 +50,7 @@ func Generate(options ...Option) error {
 		Warps []coordinates.Point
 	}
 
-	var systems []*system
+	var set []*system
 	for id, point := range pp.Points {
 		scaled := point.Scale(cfg.radius)
 		coords := coordinates.Coordinates{
@@ -55,7 +58,7 @@ func Generate(options ...Option) error {
 			Y: int(math.Round(scaled.Y)),
 			Z: int(math.Round(scaled.Z)),
 		}
-		systems = append(systems, &system{
+		set = append(set, &system{
 			Id:     id,
 			Coords: coords,
 			Size:   cfg.sphereSize,
@@ -63,19 +66,33 @@ func Generate(options ...Option) error {
 		})
 	}
 
-	var tmplFile = "D:/wraith.dev/wraithh/templates/cluster.gohtml"
-	ts, err := template.ParseFiles(tmplFile)
-	if err != nil {
-		return err
+	if cfg.mapFile != "" {
+		ts, err := template.ParseFiles(cfg.templatesPath)
+		if err != nil {
+			return nil, err
+		}
+		w, err := os.OpenFile(cfg.mapFile, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
+		if err != nil {
+			return nil, err
+		}
+		defer func(fp *os.File) {
+			_ = fp.Close()
+		}(w)
+		err = ts.Execute(w, set)
+		if err != nil {
+			return nil, err
+		}
+		log.Printf("cluster: created %q\n", cfg.mapFile)
 	}
-	w, err := os.OpenFile("cluster.html", os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
-	if err != nil {
-		return err
+
+	c := &cluster.Cluster{Radius: cfg.radius}
+	for id, sys := range set {
+		s := &systems.System{
+			Id:       id,
+			Location: sys.Coords,
+		}
+		c.Systems = append(c.Systems, s)
 	}
-	err = ts.Execute(w, systems)
-	if err != nil {
-		return err
-	}
-	_ = w.Close()
-	return fmt.Errorf("!implemented")
+
+	return c, nil
 }

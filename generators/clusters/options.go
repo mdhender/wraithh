@@ -6,9 +6,20 @@ package clusters
 import (
 	"fmt"
 	"github.com/mdhender/wraithh/generators/points"
+	"path/filepath"
 )
 
 type Option func(c *config) error
+
+func CreateHtmlMap(name string) (func(*config) error, error) {
+	return func(config *config) error {
+		config.mapFile = name
+		if config.mapFile != "" {
+			config.mapFile = filepath.Clean(config.mapFile)
+		}
+		return nil
+	}, nil
+}
 
 func SetKind(kind string) (func(*config) error, error) {
 	var pgen func() *points.Point
