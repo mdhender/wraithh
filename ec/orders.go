@@ -9,6 +9,17 @@ import (
 	"github.com/mdhender/wraithh/models/units"
 )
 
+// Orders holds all of a player's orders for a single turn.
+type Orders struct {
+	Validated bool
+	Handle    string
+	Game      string
+	Turn      int
+	Secret    *Secret
+	Orders    []orders.Order
+	Error     error
+}
+
 type Abandon struct {
 	Line     int
 	Location coordinates.Coordinates // location to be abandoned
@@ -459,6 +470,7 @@ type Transfer struct {
 
 func (o *Transfer) Execute() error { panic("!") }
 
+// The Unknown order type captures unrecognized orders.
 type Unknown struct {
 	Line    int
 	Command string
