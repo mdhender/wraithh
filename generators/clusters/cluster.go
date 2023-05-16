@@ -5,8 +5,8 @@ package clusters
 
 import (
 	"fmt"
-	"github.com/mdhender/wraithh/ec/types"
 	"github.com/mdhender/wraithh/generators/points"
+	"github.com/mdhender/wraithh/models/coordinates"
 	"html/template"
 	"log"
 	"math"
@@ -40,17 +40,17 @@ func Generate(options ...Option) error {
 
 	type system struct {
 		Id     int
-		Coords types.Coordinates
+		Coords coordinates.Coordinates
 		Size   float64
 		// Black, Blue, Gray, Green, Magenta, Purple, Random, Red, Teal, White, Yellow
 		Color template.JS
-		Warps []types.Point
+		Warps []coordinates.Point
 	}
 
 	var systems []*system
 	for id, point := range pp.Points {
 		scaled := point.Scale(cfg.radius)
-		coords := types.Coordinates{
+		coords := coordinates.Coordinates{
 			X: int(math.Round(scaled.X)),
 			Y: int(math.Round(scaled.Y)),
 			Z: int(math.Round(scaled.Z)),

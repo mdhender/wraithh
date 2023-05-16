@@ -5,12 +5,12 @@ package ec
 
 import (
 	"fmt"
-	"github.com/mdhender/wraithh/ec/types"
+	"github.com/mdhender/wraithh/models/orders"
 	"log"
 	"sort"
 )
 
-func (e *Engine) AddOrders(orders []types.Order) error {
+func (e *Engine) AddOrders(orders []orders.Order) error {
 	eo := &Orders{Orders: orders}
 	// gather secrets
 	for _, order := range eo.Orders {
@@ -33,18 +33,18 @@ func (e *Engine) AddOrders(orders []types.Order) error {
 
 func (e *Engine) Process() error {
 	// process secrets phase
-	for _, orders := range e.Orders {
-		err := e.SecretsPhase(orders)
+	for _, po := range e.Orders { // for each player orders
+		err := e.SecretsPhase(po)
 		if err != nil {
 			// any error with secrets means the order file should be skipped
-			orders.Validated = false
+			po.Validated = false
 		}
-		if orders.Validated {
-			log.Printf("secrets: validated %s\n", orders.Handle)
-		} else if orders.Error == nil {
-			log.Printf("secrets: failed    %s\n", orders.Handle)
+		if po.Validated {
+			log.Printf("secrets: validated %s\n", po.Handle)
+		} else if po.Error == nil {
+			log.Printf("secrets: failed    %s\n", po.Handle)
 		} else {
-			log.Printf("secrets: failed    %s %v\n", orders.Handle, orders.Error)
+			log.Printf("secrets: failed    %s %v\n", po.Handle, po.Error)
 		}
 	}
 
@@ -69,6 +69,7 @@ func (e *Engine) SecretsPhase(orders *Orders) error {
 	orders.Game = secret.Game
 	orders.Turn = secret.Turn
 
+	// todo: unbake the secrets!
 	switch secret.Token {
 	case "003d626a-27c9-4f92-80f3-880384f22d08":
 		if orders.Handle != "mdhender" {

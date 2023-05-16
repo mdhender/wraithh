@@ -4,7 +4,10 @@
 // Package ec implements the logic for Empyrean Challenge
 package ec
 
-import "github.com/mdhender/wraithh/ec/types"
+import (
+	"github.com/mdhender/wraithh/models/orders"
+	"github.com/mdhender/wraithh/models/player"
+)
 
 type Engine struct {
 	Game struct {
@@ -12,7 +15,7 @@ type Engine struct {
 		Name string
 		Turn int
 	}
-	Players map[string]types.Player
+	Players map[string]player.Player
 	Orders  []*Orders
 }
 
@@ -22,6 +25,6 @@ type Orders struct {
 	Game      string
 	Turn      int
 	Secret    *Secret
-	Orders    []types.Order
+	Orders    []orders.Order
 	Error     error
 }
