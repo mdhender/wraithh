@@ -15,6 +15,13 @@ import (
 	"os"
 )
 
+const (
+	minSystemSeeds, maxSystemSeeds = 125, 1024
+	minRadius, maxRadius           = 5.0, 45.0
+	defaultRadius                  = 15.0
+	sphereRatio                    = defaultRadius / maxRadius
+)
+
 // Generate creates a new cluster.
 func Generate(options ...Option) (*cluster.Cluster, error) {
 	cfg := config{

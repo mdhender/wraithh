@@ -40,20 +40,20 @@ func SetKind(kind string) (func(*config) error, error) {
 }
 
 func SetRadius(r float64) (func(*config) error, error) {
-	if r < 8.0 || r > 45.0 {
-		return nil, fmt.Errorf("radius must be between 8 and 45")
+	if r < minRadius || r > maxRadius {
+		return nil, fmt.Errorf("radius must be between %3.1f and %3.1f", minRadius, maxRadius)
 	}
 	return func(config *config) error {
 		config.radius = r
-		config.sphereSize = config.radius / 45.0
+		config.sphereSize = config.radius * sphereRatio
 
 		return nil
 	}, nil
 }
 
 func SetSystems(n int) (func(*config) error, error) {
-	if n < 125 || n > 1024 {
-		return nil, fmt.Errorf("init systems must be between 125 and 1024")
+	if n < minSystemSeeds || n > maxSystemSeeds {
+		return nil, fmt.Errorf("init systems must be between %d and %d", minSystemSeeds, maxSystemSeeds)
 	}
 	return func(config *config) error {
 		config.initSystems = n
