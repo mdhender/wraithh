@@ -112,3 +112,25 @@ func (p *Points) SetNeighbors(n int) {
 		origin.Neighbors.avd = distance / float64(len(origin.Neighbors.nb))
 	}
 }
+
+// SortByDistanceDesc sorts the points by average distance from neighbors, descending.
+// N is the number of neighbors to use for distance.
+func (p *Points) SortByDistanceDesc(n int) *Points {
+	p.SetNeighbors(0)
+	sort.Slice(p.Points, func(i, j int) bool {
+		return p.Points[i].Neighbors.avd > p.Points[j].Neighbors.avd
+	})
+	return p
+}
+
+// SortByDistanceOrigin sorts the points by distance from origin, ascending.
+func (p *Points) SortByDistanceOrigin() *Points {
+	var origin Point
+	for _, point := range p.Points {
+		point.fromOrigin = origin.DistanceTo(point)
+	}
+	sort.Slice(p.Points, func(i, j int) bool {
+		return p.Points[i].fromOrigin < p.Points[j].fromOrigin
+	})
+	return p
+}

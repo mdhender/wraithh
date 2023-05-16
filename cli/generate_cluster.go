@@ -4,7 +4,6 @@
 package cli
 
 import (
-	"fmt"
 	"github.com/mdhender/wraithh/generators/clusters"
 	"github.com/spf13/cobra"
 	"log"
@@ -15,18 +14,6 @@ var cmdGenerateCluster = &cobra.Command{
 	Use:   "cluster",
 	Short: "generate a new cluster",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		switch argsGenerateCluster.kind {
-		case "cluster", "sphere", "uniform":
-		// okay
-		default:
-			return fmt.Errorf("invalid kind")
-		}
-		if argsGenerateCluster.radius < 15 {
-			return fmt.Errorf("radius must be at least 15")
-		} else if argsGenerateCluster.radius > 45 {
-			return fmt.Errorf("radius must be at most 45")
-		}
-
 		optCluster := []clusters.Option{}
 		if opt, err := clusters.CreateHtmlMap(argsGenerateCluster.mapFile); err != nil {
 			log.Fatal(err)
@@ -66,7 +53,7 @@ func init() {
 	cmdGenerate.AddCommand(cmdGenerateCluster)
 
 	// inputs
-	cmdGenerateCluster.Flags().StringVar(&argsGenerateCluster.kind, "kind", "uniform", "point distribution (uniform, cluster, sphere)")
+	cmdGenerateCluster.Flags().StringVar(&argsGenerateCluster.kind, "kind", "uniform", "point distribution (uniform, clustered, sphere)")
 	cmdGenerateCluster.Flags().StringVar(&argsGenerateCluster.mapFile, "html-map", "", "name of map file to create (optional)")
 	cmdGenerateCluster.Flags().Float64Var(&argsGenerateCluster.radius, "radius", 15.0, "cluster radius")
 

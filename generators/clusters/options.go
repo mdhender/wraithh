@@ -24,14 +24,14 @@ func CreateHtmlMap(name string) (func(*config) error, error) {
 func SetKind(kind string) (func(*config) error, error) {
 	var pgen func() *points.Point
 	switch kind {
-	case "cluster":
+	case "clustered":
 		pgen = points.ClusteredPoint
 	case "sphere": // okay
 		pgen = points.SpherePoint
 	case "uniform": // okay
 		pgen = points.UniformPoint
 	default:
-		return nil, fmt.Errorf("kind must be uniform, cluster, or sphere")
+		return nil, fmt.Errorf("kind must be uniform, clustered, or sphere")
 	}
 	return func(config *config) error {
 		config.pgen = pgen
@@ -45,8 +45,7 @@ func SetRadius(r float64) (func(*config) error, error) {
 	}
 	return func(config *config) error {
 		config.radius = r
-		config.sphereSize = config.radius * sphereRatio
-
+		config.sphereSize = sphereRatio
 		return nil
 	}, nil
 }

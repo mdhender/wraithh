@@ -28,7 +28,7 @@ func Generate(options ...Option) (*cluster.Cluster, error) {
 		initSystems:   128,
 		pgen:          points.ClusteredPoint,
 		radius:        15.0,
-		sphereSize:    15.0 / 45.0,
+		sphereSize:    sphereRatio,
 		templatesPath: "D:/wraith.dev/wraithh/templates/cluster.gohtml",
 	}
 	for _, opt := range options {
@@ -48,30 +48,67 @@ func Generate(options ...Option) (*cluster.Cluster, error) {
 	}
 	log.Printf("len %8d min %10.7f avg %10.7f max %10.7f\n", cp.Length(), cpmin, cpavg, cpmax)
 	pp = cp
+	pp.SortByDistanceOrigin()
 
 	type system struct {
 		Id     int
 		Coords coordinates.Coordinates
+		NStars int
 		Size   float64
 		// Black, Blue, Gray, Green, Magenta, Purple, Random, Red, Teal, White, Yellow
 		Color template.JS
 		Warps []coordinates.Point
 	}
 
+	// distribution of multi-star systems
+	nstarslist := []int{4, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2}
+	//rand.Shuffle(len(nstarslist), func(i, j int) {
+	//	nstarslist[i], nstarslist[j] = nstarslist[j], nstarslist[i]
+	//})
+
 	var set []*system
 	for id, point := range pp.Points {
+		var nstars int
+		if len(nstarslist) == 0 {
+			nstars = 1
+		} else {
+			nstars, nstarslist = nstarslist[0], nstarslist[1:]
+		}
 		scaled := point.Scale(cfg.radius)
 		coords := coordinates.Coordinates{
 			X: int(math.Round(scaled.X)),
 			Y: int(math.Round(scaled.Y)),
 			Z: int(math.Round(scaled.Z)),
 		}
-		set = append(set, &system{
+		ss := &system{
 			Id:     id,
 			Coords: coords,
 			Size:   cfg.sphereSize,
-			Color:  "Random",
-		})
+			NStars: nstars,
+		}
+		switch nstars {
+		// Black, Blue, Gray, Green, Magenta, Purple, Random, Red, Teal, White, Yellow
+		case 1:
+			ss.Color = "Gray"
+		case 2:
+			ss.Color = "Blue"
+		case 3:
+			ss.Color = "Red"
+		case 4:
+			ss.Color = "Teal"
+		default:
+			ss.Color = "Random"
+		}
+		set = append(set, ss)
+	}
+
+	c := &cluster.Cluster{Radius: cfg.radius}
+	for _, sys := range set {
+		s := systems.System{
+			Id:       uuid.New().String(),
+			Location: sys.Coords,
+		}
+		c.Systems = append(c.Systems, s)
 	}
 
 	if cfg.mapFile != "" {
@@ -91,15 +128,6 @@ func Generate(options ...Option) (*cluster.Cluster, error) {
 			return nil, err
 		}
 		log.Printf("cluster: created %q\n", cfg.mapFile)
-	}
-
-	c := &cluster.Cluster{Radius: cfg.radius}
-	for _, sys := range set {
-		s := systems.System{
-			Id:       uuid.New().String(),
-			Location: sys.Coords,
-		}
-		c.Systems = append(c.Systems, s)
 	}
 
 	return c, nil

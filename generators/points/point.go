@@ -14,11 +14,16 @@ type Point struct { // location being set up
 		avd float64     // average distance to neighbors
 		nb  []*neighbor // neighbors sorted by distance
 	}
+	fromOrigin float64
 }
 
 type neighbor struct {
 	point    *Point
 	distance float64
+}
+
+func (p *Point) AvgDistance() float64 {
+	return p.Neighbors.avd
 }
 
 func (p *Point) DistanceTo(b *Point) float64 {
