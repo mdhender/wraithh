@@ -7,5 +7,5 @@ import "github.com/mdhender/wraithh/models/systems"
 
 type Cluster struct {
 	Radius  float64
-	Systems []*systems.System
+	Systems []systems.System
 }

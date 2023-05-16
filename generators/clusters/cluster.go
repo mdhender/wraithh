@@ -4,6 +4,7 @@
 package clusters
 
 import (
+	"github.com/google/uuid"
 	"github.com/mdhender/wraithh/generators/points"
 	"github.com/mdhender/wraithh/models/cluster"
 	"github.com/mdhender/wraithh/models/coordinates"
@@ -86,9 +87,9 @@ func Generate(options ...Option) (*cluster.Cluster, error) {
 	}
 
 	c := &cluster.Cluster{Radius: cfg.radius}
-	for id, sys := range set {
-		s := &systems.System{
-			Id:       id,
+	for _, sys := range set {
+		s := systems.System{
+			Id:       uuid.New().String(),
 			Location: sys.Coords,
 		}
 		c.Systems = append(c.Systems, s)

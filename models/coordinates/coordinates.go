@@ -9,6 +9,7 @@ type Coordinates struct { // location being set up
 	X, Y, Z int
 	System  string // suffix for multi-star system, A...Z
 	Orbit   int
+	Ring    int // orbital ring 0..127 (0 means on surface)
 }
 
 func (c Coordinates) String() string {
