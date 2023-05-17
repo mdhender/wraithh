@@ -68,6 +68,14 @@ func (p *Points) CullByCompanions(n int) *Points {
 	return cp
 }
 
+// CullByDistanceFromOrigin culls out the systems that are farthest from the origin
+func (p *Points) CullByDistanceFromOrigin() *Points {
+	cp := p.clone()
+	cp.SortByDistanceOrigin()
+	cp.Points = cp.Points[:125]
+	return cp
+}
+
 // CullByMinDistance culls out the systems that are closest to each other
 func (p *Points) CullByMinDistance(min float64) *Points {
 	cp := &Points{}

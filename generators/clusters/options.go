@@ -35,6 +35,7 @@ func SetKind(kind string) (func(*config) error, error) {
 	}
 	return func(config *config) error {
 		config.pgen = pgen
+		config.clustered = kind == "clustered"
 		return nil
 	}, nil
 }

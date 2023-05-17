@@ -27,6 +27,7 @@ func Generate(options ...Option) (*cluster.Cluster, error) {
 	cfg := config{
 		initSystems:   128,
 		pgen:          points.ClusteredPoint,
+		clustered:     true,
 		radius:        15.0,
 		sphereSize:    sphereRatio,
 		templatesPath: "D:/wraith.dev/wraithh/templates/cluster.gohtml",
@@ -51,7 +52,7 @@ func Generate(options ...Option) (*cluster.Cluster, error) {
 	pp.SortByDistanceOrigin()
 
 	type system struct {
-		Id     int
+		Id     string
 		Coords coordinates.Coordinates
 		NStars int
 		Size   float64
@@ -61,13 +62,15 @@ func Generate(options ...Option) (*cluster.Cluster, error) {
 	}
 
 	// distribution of multi-star systems
-	nstarslist := []int{4, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2}
+	nstarslist := []int{4, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2}
 	//rand.Shuffle(len(nstarslist), func(i, j int) {
 	//	nstarslist[i], nstarslist[j] = nstarslist[j], nstarslist[i]
 	//})
+	log.Printf("cluster: nstars %d\n", len(nstarslist))
 
 	var set []*system
-	for id, point := range pp.Points {
+	locations := make(map[string]*system)
+	for n, point := range pp.Points {
 		var nstars int
 		if len(nstarslist) == 0 {
 			nstars = 1
@@ -80,26 +83,45 @@ func Generate(options ...Option) (*cluster.Cluster, error) {
 			Y: int(math.Round(scaled.Y)),
 			Z: int(math.Round(scaled.Z)),
 		}
-		ss := &system{
-			Id:     id,
-			Coords: coords,
-			Size:   cfg.sphereSize,
-			NStars: nstars,
+		id := coords.String()
+		if locations[id] != nil {
+			locations[id].NStars += nstars
+			log.Printf("cluster: %d collided!\n", n)
+		} else {
+			set = append(set, &system{
+				Id:     id,
+				Coords: coords,
+				Size:   cfg.sphereSize,
+				NStars: nstars,
+			})
 		}
-		switch nstars {
+	}
+	for _, ss := range set {
 		// Black, Blue, Gray, Green, Magenta, Purple, Random, Red, Teal, White, Yellow
+		switch ss.NStars {
 		case 1:
-			ss.Color = "Gray"
+			ss.Color = "Black"
 		case 2:
 			ss.Color = "Blue"
 		case 3:
-			ss.Color = "Red"
+			ss.Color = "Gray"
 		case 4:
+			ss.Color = "Green"
+		case 5:
+			ss.Color = "Magenta"
+		case 6:
+			ss.Color = "Purple"
+		case 7:
+			ss.Color = "Red"
+		case 8:
 			ss.Color = "Teal"
+		case 9:
+			ss.Color = "White"
+		case 10:
+			ss.Color = "Yellow"
 		default:
 			ss.Color = "Random"
 		}
-		set = append(set, ss)
 	}
 
 	c := &cluster.Cluster{Radius: cfg.radius}
