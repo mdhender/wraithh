@@ -9,5 +9,5 @@ import "github.com/mdhender/wraithh/models/coordinates"
 type System struct {
 	Id       string                  // unique identifier for the system
 	Location coordinates.Coordinates // location of the system
-	Stars    []*Star                 // stars in the system
+	Stars    []string                // id for every star in the system
 }

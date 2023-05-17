@@ -4,9 +4,11 @@
 package cli
 
 import (
+	"encoding/json"
 	"github.com/mdhender/wraithh/generators/clusters"
 	"github.com/spf13/cobra"
 	"log"
+	"os"
 )
 
 // cmdGenerateCluster runs the cluster generator command
@@ -36,9 +38,32 @@ var cmdGenerateCluster = &cobra.Command{
 			optCluster = append(optCluster, opt)
 		}
 
-		if _, err := clusters.Generate(optCluster...); err != nil {
+		c, sy, st, err := clusters.Generate(optCluster...)
+		if err != nil {
 			log.Fatal(err)
 		}
+		// adapt c to json
+		if data, err := json.MarshalIndent(c, "", "  "); err != nil {
+			log.Fatal(err)
+		} else if err = os.WriteFile("g1/out/cluster.json", data, 0660); err != nil {
+			log.Fatal(err)
+		}
+		log.Printf("cluster: created g1/out/cluster.json")
+		// adapt sy to json
+		if data, err := json.MarshalIndent(sy, "", "  "); err != nil {
+			log.Fatal(err)
+		} else if err = os.WriteFile("g1/out/systems.json", data, 0660); err != nil {
+			log.Fatal(err)
+		}
+		log.Printf("cluster: created g1/out/stars.json")
+		// adapt st to json
+		if data, err := json.MarshalIndent(st, "", "  "); err != nil {
+			log.Fatal(err)
+		} else if err = os.WriteFile("g1/out/stars.json", data, 0660); err != nil {
+			log.Fatal(err)
+		}
+		log.Printf("cluster: created g1/out/stars.json")
+
 		return nil
 	},
 }

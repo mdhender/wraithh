@@ -4,14 +4,15 @@
 package clusters
 
 import (
-	"github.com/google/uuid"
 	"github.com/mdhender/wraithh/generators/points"
 	"github.com/mdhender/wraithh/models/cluster"
 	"github.com/mdhender/wraithh/models/coordinates"
+	"github.com/mdhender/wraithh/models/orbits"
 	"github.com/mdhender/wraithh/models/systems"
 	"html/template"
 	"log"
 	"math"
+	"math/rand"
 	"os"
 )
 
@@ -23,7 +24,7 @@ const (
 )
 
 // Generate creates a new cluster.
-func Generate(options ...Option) (*cluster.Cluster, error) {
+func Generate(options ...Option) (*cluster.Cluster, []systems.System, []systems.Star, error) {
 	cfg := config{
 		initSystems:   128,
 		pgen:          points.ClusteredPoint,
@@ -34,7 +35,7 @@ func Generate(options ...Option) (*cluster.Cluster, error) {
 	}
 	for _, opt := range options {
 		if err := opt(&cfg); err != nil {
-			return nil, err
+			return nil, nil, nil, err
 		}
 	}
 
@@ -124,33 +125,78 @@ func Generate(options ...Option) (*cluster.Cluster, error) {
 		}
 	}
 
+	const sysfix = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 	c := &cluster.Cluster{Radius: cfg.radius}
+	var sy []systems.System
+	var st []systems.Star
 	for _, sys := range set {
 		s := systems.System{
-			Id:       uuid.New().String(),
+			Id:       sys.Coords.String(),
 			Location: sys.Coords,
 		}
-		c.Systems = append(c.Systems, s)
+		c.Systems = append(c.Systems, s.Id)
+
+		for i := 0; i < sys.NStars; i++ {
+			starno := sysfix[i : i+1]
+			star := systems.Star{
+				Location: coordinates.Coordinates{
+					X:      sys.Coords.X,
+					Y:      sys.Coords.Y,
+					Z:      sys.Coords.Z,
+					System: starno,
+				},
+			}
+			star.Id = star.Location.String()
+			l := coordinates.Coordinates{
+				X:      sys.Coords.X,
+				Y:      sys.Coords.Y,
+				Z:      sys.Coords.Z,
+				System: starno,
+			}
+			for o := 1; o < 11; o++ {
+				l.Orbit = o
+				ob := orbits.Orbit{
+					Id:       l.String(),
+					Location: l,
+				}
+				switch rand.Intn(5) {
+				case 0:
+					ob.Kind = orbits.Empty
+				case 1:
+					ob.Kind = orbits.AsteroidBelt
+				case 2, 3:
+					ob.Kind = orbits.Terrestrial
+				case 4:
+					ob.Kind = orbits.GasGiant
+				}
+				ob.Id = ob.Location.String()
+				star.Orbits[o] = ob
+			}
+			st = append(st, star)
+			c.Stars = append(c.Stars, star.Id)
+			s.Stars = append(s.Stars, star.Id)
+		}
+		sy = append(sy, s)
 	}
 
 	if cfg.mapFile != "" {
 		ts, err := template.ParseFiles(cfg.templatesPath)
 		if err != nil {
-			return nil, err
+			return nil, nil, nil, err
 		}
 		w, err := os.OpenFile(cfg.mapFile, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
 		if err != nil {
-			return nil, err
+			return nil, nil, nil, err
 		}
 		defer func(fp *os.File) {
 			_ = fp.Close()
 		}(w)
 		err = ts.Execute(w, set)
 		if err != nil {
-			return nil, err
+			return nil, nil, nil, err
 		}
 		log.Printf("cluster: created %q\n", cfg.mapFile)
 	}
 
-	return c, nil
+	return c, sy, st, nil
 }

@@ -6,10 +6,12 @@ package orbits
 import (
 	"bytes"
 	"fmt"
+	"github.com/mdhender/wraithh/models/coordinates"
 )
 
 type Orbit struct {
-	Id           string    // unique identifier for the orbit
+	Id           string // unique identifier for the orbit
+	Location     coordinates.Coordinates
 	Kind         OrbitKind // kind of orbit
 	Habitability int       // range 0..25
 	ControlledBy string    // id of nation controlling this orbit

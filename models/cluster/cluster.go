@@ -3,9 +3,8 @@
 
 package cluster
 
-import "github.com/mdhender/wraithh/models/systems"
-
 type Cluster struct {
 	Radius  float64
-	Systems []systems.System
+	Systems []string // id for every system in the cluster
+	Stars   []string // id for every star in the cluster
 }
